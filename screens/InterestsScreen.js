@@ -15,9 +15,12 @@ export default function InterestsScreen({navigation}) {
 
     const listInterests = data.interests.map((item) =>
         <Pressable onPress={() => setSelectedInterests(item)}>
-            <View style={styles.itemContainer}>
-                <Text style={styles.paragraph}>{item}</Text>
+            <View style={{marginHorizontal: 5, marginVertical: 2}}>
+                <View style={styles.itemContainer}>
+                    <Text style={styles.paragraph}>{item}</Text>
+                </View>
             </View>
+            
         </Pressable>
     );
     const listMusic = data.music.map((item) =>
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter-Bold',
         color: colors.rust,
         fontSize: 20,
-        marginTop: '10%',
+        marginVertical: '5%',
         textAlign: 'left'
     },
     paragraph: {

@@ -11,7 +11,7 @@ export default function LogInScreen({navigation}) {
         style={styles.background}>
           <Image source={require('../assets/budder-logo.png')}/>
           <Text style={styles.valueProp}>MAKE MEMORIES TOGETHER</Text>
-          <Pressable style={styles.whiteButton}>
+          <Pressable style={styles.whiteButton} onPress={() => navigation.navigate("Home")}>
             <Text style={{fontFamily: 'Inter-Regular', fontSize: 24, color: colors.rust}}>Login</Text>
           </Pressable>
           <Pressable style={styles.yellowButton} onPress={() => navigation.navigate("Onboarding")}>
