@@ -12,6 +12,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import LogInScreen from './screens/LogInScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import InterestsScreen from './screens/InterestsScreen';
+import HomeScreen from './screens/HomeScreen';
+import AddProfileScreen from './screens/AddProfileScreen';
 
 // Keep the splash screen visible while we fetch resources
 // SplashScreen.preventAutoHideAsync();
@@ -39,6 +41,8 @@ export default function App() {
             <Stack.Screen name="Login" component={LogInScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Interests" component={InterestsScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="AddProfile" component={AddProfileScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="Home" component={HomeScreen} option={{headerShown: false}}/>
           </Stack.Navigator>
       </NavigationContainer>
   )
