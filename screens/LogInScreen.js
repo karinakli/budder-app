@@ -1,5 +1,5 @@
 import {LinearGradient} from 'expo-linear-gradient';
-import { StyleSheet, Text, View, Image, useState, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import {colors} from '../assets/Themes/colors'
 
 export default function LogInScreen({navigation}) {
@@ -11,12 +11,12 @@ export default function LogInScreen({navigation}) {
         style={styles.background}>
           <Image source={require('../assets/budder-logo.png')}/>
           <Text style={styles.valueProp}>MAKE MEMORIES TOGETHER</Text>
-          <Pressable style={styles.whiteButton} onPress={() => navigation.navigate("Home")}>
+          <TouchableOpacity style={styles.whiteButton} onPress={() => navigation.navigate("Home")}>
             <Text style={{fontFamily: 'Inter-Regular', fontSize: 24, color: colors.rust}}>Login</Text>
-          </Pressable>
-          <Pressable style={styles.yellowButton} onPress={() => navigation.navigate("Onboarding")}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.yellowButton} onPress={() => navigation.navigate("Onboarding")}>
             <Text style={{fontFamily: 'Inter-Regular', fontSize: 24, color: colors.rust}}>Sign Up</Text>
-          </Pressable>
+          </TouchableOpacity>
       </LinearGradient>
       </View>
     );

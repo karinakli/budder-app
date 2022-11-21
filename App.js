@@ -2,25 +2,22 @@ import AppLoading from 'expo-app-loading';
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { NavigationContainer, StackActions, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useState, useEffect, useCallback } from 'react';
 
 import {colors} from './assets/Themes/colors'
 import {useFonts} from 'expo-font'
 
-import * as SplashScreen from 'expo-splash-screen';
 import LogInScreen from './screens/LogInScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import InterestsScreen from './screens/InterestsScreen';
 import HomeScreen from './screens/HomeScreen';
 import AddProfileScreen from './screens/AddProfileScreen';
+import LocationScreen from './screens/LocationScreen';
+import ConfirmationScreen from './screens/ConfirmationScreen'
 
-// Keep the splash screen visible while we fetch resources
-// SplashScreen.preventAutoHideAsync();
 const Stack = createStackNavigator();
 
 export default function App() {
-  // const [logIn, setLogIn] = useState(false);
   const [appIsReady, setAppIsReady] = useState(false);
   const [fontsLoaded] = useFonts({
     'Inter-Bold': require('./assets/Fonts/Inter-Bold.ttf'),
@@ -35,13 +32,14 @@ export default function App() {
   }
 
   return (
-    // <View style={styles.container} onLayout={onLayoutRootView}>
       <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name="Login" component={LogInScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Interests" component={InterestsScreen} options={{headerShown: false}}/>
             <Stack.Screen name="AddProfile" component={AddProfileScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="Location" component={LocationScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="Confirmation" component={ConfirmationScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Home" component={HomeScreen} option={{headerShown: false}}/>
           </Stack.Navigator>
       </NavigationContainer>

@@ -1,26 +1,11 @@
 import {LinearGradient} from 'expo-linear-gradient';
 import { StyleSheet, Text, View, Image, useState, Pressable } from 'react-native';
 import {colors} from '../assets/Themes/colors'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import ItineraryScreen from './ItineraryScreen'
-import ProfileScreen from './ProfileScreen'
-
-const HomeComp = () => {
-  return (
-    <View style={styles.container}>
-    </View>
-  );
-}
-
-const Tab = createBottomTabNavigator();
 
 export default function HomeScreen({navigation}) {
     return (
-      <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeComp} option={{headerShown: false}}/>
-        <Tab.Screen name="Itinerary" component={ItineraryScreen} option={{headerShown: false}}/>
-        <Tab.Screen name="Profile" component={ProfileScreen} option={{headerShown: false}}/>
-      </Tab.Navigator>
+      <View style={styles.container}>
+      </View>
     );
   }
 

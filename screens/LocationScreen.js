@@ -3,29 +3,34 @@ import { StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../assets/Themes/colors'
 
-export default function AddProfileScreen({navigation}) {
-    const [profilePhoto, setProfilePhoto] = useState(true);
+export default function LocationScreen({navigation}) {
+    const [locationAllowed, setLocationAllowed] = useState(true);
 
     return (
         <View style={styles.container}>
           <View style={styles.progressBar}>
-              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '60%'}}/>
+              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '80%'}}/>
           </View>
-          <Text style={styles.header}>ADD A PROFILE PHOTO</Text>
-          <Image style={{marginTop: '10%'}}
-            source={require('../assets/Images/add-photo.png')}/>
-          <Text style={styles.bottomText}>skip for now</Text>
+          <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '50%'}}>
+            <Image source={require('../assets/Images/location.png')}/>
+            <Text style={styles.header}>TURN ON LOCATION</Text>
+            <Text style={styles.paragraph}>Get more precise friendship recommendations without the unnecessary effort.</Text>
+            <TouchableOpacity style={styles.yellowButton} onPress={() => navigation.navigate("Location")}>
+                <Text style={{fontFamily: 'Inter-Regular', fontSize: 20, color: colors.rust}}>Allow Location</Text>
+            </TouchableOpacity>
+          </View>
           
-          {(profilePhoto) ? (
+          {(locationAllowed) ? (
             <LinearGradient 
                 style={styles.nextButton}
                 colors={[colors.budder, colors.maroon]}
                 start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
                 location={[0, 0.8]}>
-                <TouchableOpacity style={styles.nextButtonFilled} onPress={() => navigation.navigate("Location")}>
+                <TouchableOpacity style={styles.nextButtonFilled} onPress={() => navigation.navigate("Confirmation")}>
                     <Image source={require('../assets/Images/arrow-right.png')}/>
                 </TouchableOpacity>
             </LinearGradient>
+            
         ) : (
             <View style={styles.nextButton}>
                 <Image source={require('../assets/Images/arrow-right.png')}/>
@@ -57,14 +62,22 @@ export default function AddProfileScreen({navigation}) {
         marginTop: '15%',
         textAlign: 'center'
     },
-    bottomText: {
+    paragraph: {
         fontFamily: 'Inter-Regular',
         color: colors.rust,
         fontSize: 16,
-        textDecorationLine: 'underline',
-        position: 'absolute',
-        top: '99%',
-        left: '10%',
+        textAlign: 'center',
+        marginTop: 16,
+        width: 300,
+    },
+    yellowButton: {
+        paddingHorizontal: 30,
+        height: 51,
+        borderRadius: 26,
+        marginTop: '25%',
+        backgroundColor: colors.budder,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     nextButton: {
         backgroundColor: '#C4C4C4',

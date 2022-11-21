@@ -1,7 +1,31 @@
 import { useState } from 'react';
-import { StyleSheet, View, Image, Text, TextInput, Pressable, FlatList} from 'react-native';
+import { StyleSheet, View, Image, Text, Pressable, ScrollView, TouchableOpacity} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../assets/Themes/colors'
+
+const ListItem = (props) => {
+    const {item} = props;
+    const [pressed, setPressed] = useState(false);
+
+    const onPress = () => {
+        setPressed(prevPressd => !prevPressd);
+    }
+
+    return (
+        <TouchableOpacity onPress={onPress} >
+            <View style={{marginHorizontal: 5, marginVertical: 5}}>
+                <View style={{ backgroundColor : pressed ? colors.budder : colors.himalayan, 
+                                padding: 10,
+                                borderRadius: '50%',
+                                alignItems: 'center',
+                                justifyContent: 'center', }}>
+                    <Text style={styles.paragraph}>{props.name}</Text>
+                </View>
+            </View>
+            
+        </TouchableOpacity>
+    );
+}
 
 export default function InterestsScreen({navigation}) {
     const [selectedInterests, setSelectedInterests] = useState([])
@@ -9,53 +33,35 @@ export default function InterestsScreen({navigation}) {
     const [selectedFoods, setSelectedFoods] = useState([])
     const data = {
         interests: ["Cooking", "Traveling", "Art", "Gaming", "Dance", "Photography", "Baking", "Hiking", "Gym"],
-        music: ["Pop", "Hip Hop", "EDM", "Rock", "Country", "Classical", "Jazz", "R&B", "Latin", "Kpop"],
-        foods: ["Mexican", "Italian", "Chinese", "Japanese", "Thai", "Indian", "American", "French", "Greek", "Korean"], 
+        music: ["Pop", "Hip Hop", "EDM","Country", "Classical", "R&B", "Global"],
+        foods: ["Mexican", "Italian", "Chinese", "Japanese", "Thai", "Indian", "American", "Greek", "Korean"], 
     }
 
     const listInterests = data.interests.map((item) =>
-        <Pressable onPress={() => setSelectedInterests(item)}>
-            <View style={{marginHorizontal: 5, marginVertical: 2}}>
-                <View style={styles.itemContainer}>
-                    <Text style={styles.paragraph}>{item}</Text>
-                </View>
-            </View>
-            
-        </Pressable>
+        <ListItem name={item}/>
     );
     const listMusic = data.music.map((item) =>
-        <Pressable onPress={() => setSelectedMusic(item)}>
-            <View style={styles.itemContainer}>
-                <Text style={styles.paragraph}>{item}</Text>
-            </View>
-        </Pressable>
+        <ListItem name={item}/>
     );
     const listFoods = data.foods.map((item) =>
-        <Pressable onPress={() => setSelectedFoods(item)}>
-            <View style={styles.itemContainer}>
-                <Text style={styles.paragraph}>{item}</Text>
-            </View>
-        </Pressable>
+        <ListItem name={item}/>
     );
 
     return (
       <View style={styles.container}>
         <View style={styles.progressBar}>
-            <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '50%'}}/>
+            <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '40%'}}/>
         </View>
         <Text style={styles.paragraph}>Fill out your interests so we can customize your friendship recommendations!</Text>
-        <Text style={styles.header}>INTERESTS/HOBBIES</Text>
-        {/* <FlatList
-            data={data.interests}
-            renderItem={renderItem}
-            horizontal={true}
-        /> */}
-        <Text>{listInterests}</Text>
-
-        <Text style={styles.header}>MUSIC TASTE</Text>
-        <Text>{listMusic}</Text>
-        <Text style={styles.header}>FAVORITE FOODS</Text>
-        <Text>{listFoods}</Text>
+        <ScrollView>
+            <Text style={styles.header}>INTERESTS/HOBBIES</Text>
+            <Text>{listInterests}</Text>
+            <Text style={styles.header}>MUSIC TASTE</Text>
+            <Text>{listMusic}</Text>
+            <Text style={styles.header}>FAVORITE FOODS</Text>
+            <Text>{listFoods}</Text>    
+        </ScrollView>
+        
 
         {(selectedInterests && selectedMusic && selectedFoods) ? (
             <LinearGradient 
@@ -63,15 +69,15 @@ export default function InterestsScreen({navigation}) {
                 colors={[colors.budder, colors.maroon]}
                 start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
                 location={[0, 0.8]}>
-                <Pressable style={styles.nextButtonFilled} onPress={() => navigation.navigate("AddProfile")}>
+                <TouchableOpacity style={styles.nextButtonFilled} onPress={() => navigation.navigate("AddProfile")}>
                     <Image source={require('../assets/Images/arrow-right.png')}/>
-                </Pressable>
+                </TouchableOpacity>
             </LinearGradient>
             
         ) : (
-            <Pressable style={styles.nextButton}>
+            <View style={styles.nextButton}>
                 <Image source={require('../assets/Images/arrow-right.png')}/>
-            </Pressable>
+            </View>
         )}
       </View>
     );

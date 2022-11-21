@@ -10,7 +10,7 @@ export default function OnboardingScreen({navigation}) {
     return (
         <View style={styles.container}>
           <View style={styles.progressBar}>
-              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '25%'}}/>
+              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '20%'}}/>
           </View>
           <Text style={styles.header}>WHAT IS YOUR FULL NAME?</Text>
           
