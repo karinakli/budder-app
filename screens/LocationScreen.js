@@ -1,10 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
-import {LinearGradient} from 'expo-linear-gradient';
-import {colors} from '../assets/Themes/colors'
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors } from '../assets/Themes/colors'
+
+import * as Location from 'expo-location'
 
 export default function LocationScreen({navigation}) {
     const [locationAllowed, setLocationAllowed] = useState(true);
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+
+    async function getLocation() {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+        }
+        let location = await Location.getCurrentPositionAsync({});
+        console.log(location)
+        let locationObjForGeocode = {
+            'latitude': location.coords.latitude,
+            'longitude': location.coords.longitude
+        }
+        let address = await Location.reverseGeocodeAsync(locationObjForGeocode)
+        setLocation(address[0].name);
+    }
 
     return (
         <View style={styles.container}>
@@ -15,7 +35,8 @@ export default function LocationScreen({navigation}) {
             <Image source={require('../assets/Images/location.png')}/>
             <Text style={styles.header}>TURN ON LOCATION</Text>
             <Text style={styles.paragraph}>Get more precise friendship recommendations without the unnecessary effort.</Text>
-            <TouchableOpacity style={styles.yellowButton} onPress={() => navigation.navigate("Location")}>
+            <Text style={styles.paragraph}>{location}</Text>
+            <TouchableOpacity style={styles.yellowButton} onPress={getLocation}>
                 <Text style={{fontFamily: 'Inter-Regular', fontSize: 20, color: colors.rust}}>Allow Location</Text>
             </TouchableOpacity>
           </View>

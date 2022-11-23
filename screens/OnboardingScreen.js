@@ -2,40 +2,66 @@ import { useState } from 'react';
 import { StyleSheet, View, Image, Text, TextInput, Pressable} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../assets/Themes/colors'
+import { useEffect } from 'react'
+import firebase, { db, auth } from "../firebase"
 
 export default function OnboardingScreen({navigation}) {
     const [username, onChangeName] = useState(null)
-    const [number, onChangeNumber] = useState(null)
+    const [password, onChangePassword] = useState(null)
+
+    useEffect(() => {
+        const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                navigation.navigate("Interests")
+            }
+        })
+        return unsubscribe
+    },[])
+
+    const handleSignUp = () => {
+        firebase.auth()
+        .createUserWithEmailAndPassword(username, password)
+        .then(userCredentials => {
+            const user = userCredentials.user;
+            db.collection('users').doc(user.uid).set({
+                email: user.email
+            })
+        })
+        .catch(error => alert(error.message))
+    }
 
     return (
         <View style={styles.container}>
           <View style={styles.progressBar}>
               <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '20%'}}/>
           </View>
-          <Text style={styles.header}>WHAT IS YOUR FULL NAME?</Text>
+          <Text style={styles.header}>WHAT IS YOUR EMAIL?</Text>
           
           <LinearGradient 
               colors={username ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
               style={styles.inputGrad}
               start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
-              <TextInput style={styles.inputFilled} onChangeText={onChangeName} value={username} placeholder="Your Name"/>
+              <TextInput style={styles.inputFilled} onChangeText={onChangeName} value={username} placeholder="Email"/>
           </LinearGradient>
   
-          <Text style={styles.header}>PHONE NUMBER</Text>
+          <Text style={styles.header}>...AND A PASSWORD</Text>
   
           <LinearGradient 
-              colors={number ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
+              colors={password ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
               style={styles.inputGrad}
               start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
-              <TextInput style={styles.inputFilled} onChangeText={onChangeNumber} value={number} placeholder="Phone Number"/>
+              <TextInput style={styles.inputFilled} onChangeText={onChangePassword} value={password} placeholder="Password"/>
           </LinearGradient>
   
           <LinearGradient 
               style={styles.nextButton}
-              colors={(number && username) ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
+              colors={(password && username) ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
               start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
               location={[0, 0.8]}>
-              <Pressable style={styles.nextButtonFilled} onPress={() => navigation.navigate("Interests")}>
+              <Pressable style={styles.nextButtonFilled} onPress={() => {
+                if (password && username) {
+                    handleSignUp()
+                }}}>
                   <Image source={require('../assets/Images/arrow-right.png')}/>
               </Pressable>
           </LinearGradient>
