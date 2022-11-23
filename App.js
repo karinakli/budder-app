@@ -33,7 +33,7 @@ export default function App() {
 
   return (
       <NavigationContainer>
-          <Stack.Navigator>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Login" component={LogInScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Interests" component={InterestsScreen} options={{headerShown: false}}/>

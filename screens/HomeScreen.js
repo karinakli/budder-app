@@ -4,6 +4,7 @@ import {colors} from '../assets/Themes/colors'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ItineraryScreen from './ItineraryScreen'
 import ProfileScreen from './ProfileScreen'
+import Ionicons from '@expo/vector-icons/Ionicons'
 
 const HomeComp = () => {
   return (
@@ -16,10 +17,26 @@ const Tab = createBottomTabNavigator();
 
 export default function HomeScreen({navigation}) {
     return (
-      <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeComp} option={{headerShown: false}}/>
-        <Tab.Screen name="Itinerary" component={ItineraryScreen} option={{headerShown: false}}/>
-        <Tab.Screen name="Profile" component={ProfileScreen} option={{headerShown: false}}/>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === 'HomeScreen') {
+              iconName = 'home'
+            } else if (route.name === 'Itinerary') {
+              iconName = 'list'
+            } else if (route.name === 'Profile') {
+              iconName = 'person'
+            }
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: colors.budder,
+          tabBarInactiveTintColor: 'black',
+        })}
+      >
+        <Tab.Screen name="HomeScreen" component={HomeComp} options={{headerShown: false}}/>
+        <Tab.Screen name="Itinerary" component={ItineraryScreen} options={{headerShown: false}}/>
+        <Tab.Screen name="Profile" component={ProfileScreen} options={{headerShown: false}}/>
       </Tab.Navigator>
     );
   }
