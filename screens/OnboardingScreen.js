@@ -50,7 +50,7 @@ export default function OnboardingScreen({navigation}) {
               colors={password ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
               style={styles.inputGrad}
               start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
-              <TextInput style={styles.inputFilled} onChangeText={onChangePassword} value={password} placeholder="Password"/>
+              <TextInput secureTextEntry={true} style={styles.inputFilled} onChangeText={onChangePassword} value={password} placeholder="Password"/>
           </LinearGradient>
   
           <LinearGradient 
