@@ -7,7 +7,7 @@ export default function ConfirmationScreen({navigation}) {
     return (
         <View style={styles.container}>
           <View style={styles.progressBar}>
-              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '80%'}}/>
+              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '100%'}}/>
           </View>
           <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '60%'}}>
             <Image source={require('../assets/Images/all-set.png')}/>

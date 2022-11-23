@@ -1,13 +1,27 @@
 import { useState } from 'react';
 import { StyleSheet, View, Image, Text, Pressable, ScrollView, TouchableOpacity} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
-import {colors} from '../assets/Themes/colors'
+import {colors} from '../assets/Themes/colors';
+import { db, auth } from "../firebase"
+import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 const ListItem = (props) => {
     const {item} = props;
     const [pressed, setPressed] = useState(false);
 
-    const onPress = () => {
+    async function onPress() {
+        const user = auth.currentUser;
+        const userRef = doc(db, "users", user.uid);
+        if (!pressed) {
+            await updateDoc(userRef, {
+                interests: arrayUnion(props.name)
+            });
+        
+        } else {
+            await updateDoc(userRef, {
+                interests: arrayRemove(props.name)
+            });
+        }
         setPressed(prevPressd => !prevPressd);
     }
 

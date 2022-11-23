@@ -1,10 +1,46 @@
 import { useState } from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../assets/Themes/colors'
+import * as ImagePicker from 'expo-image-picker';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, auth } from "../firebase"
+import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function AddProfileScreen({navigation}) {
-    const [profilePhoto, setProfilePhoto] = useState(true);
+    const [profilePhoto, setProfilePhoto] = useState(null);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.cancelled) {
+            setProfilePhoto(result.uri);
+            handleSavePhoto(result.uri)
+        }
+    }
+
+    async function uploadImageAsync(uri) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `profiles/${auth.currentUser.uid}`);
+
+        uploadBytes(storageRef, profilePhoto).then((snapshot) => {
+            console.log(snapshot);
+        });
+    }
+
+    const handleSavePhoto = async (uri) => {
+        const profileURI = await uploadImageAsync(uri);
+        // const user = auth.currentUser;
+        // const userRef = doc(db, "users", user.uid);
+        // await updateDoc(userRef, {
+        //     profilePic: profileURI
+        // });
+    }
 
     return (
         <View style={styles.container}>
@@ -12,31 +48,40 @@ export default function AddProfileScreen({navigation}) {
               <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '60%'}}/>
           </View>
           <Text style={styles.header}>ADD A PROFILE PHOTO</Text>
-          <Image style={{marginTop: '10%'}}
-            source={require('../assets/Images/add-photo.png')}/>
-          <Text style={styles.bottomText}>skip for now</Text>
+          <TouchableOpacity onPress={pickImage}>
+            {profilePhoto ? <Image source={{ uri: profilePhoto }} style={styles.profilePhoto} />
+             : <Image style={{marginTop: '10%'}} source={require('../assets/Images/add-photo.png')}/> }
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.bottomText} onPress={() => navigation.navigate("Location")}>
+            <Text style={styles.bottomText}>skip for now</Text>
+          </TouchableOpacity>
           
-          {(profilePhoto) ? (
-            <LinearGradient 
-                style={styles.nextButton}
-                colors={[colors.budder, colors.maroon]}
-                start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
-                location={[0, 0.8]}>
-                <TouchableOpacity style={styles.nextButtonFilled} onPress={() => navigation.navigate("Location")}>
-                    <Image source={require('../assets/Images/arrow-right.png')}/>
-                </TouchableOpacity>
-            </LinearGradient>
-        ) : (
-            <View style={styles.nextButton}>
-                <Image source={require('../assets/Images/arrow-right.png')}/>
-            </View>
-        )}
+          <LinearGradient 
+              style={styles.nextButton}
+              colors={profilePhoto ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
+              start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
+              location={[0, 0.8]}>
+              <Pressable style={styles.nextButtonFilled} onPress={() => {
+                if (profilePhoto) {
+                    // handleSavePhoto()
+                }
+                navigation.navigate("Location")
+                }}>
+                  <Image source={require('../assets/Images/arrow-right.png')}/>
+              </Pressable>
+          </LinearGradient>
 
         </View>
       );
   }
 
   const styles = StyleSheet.create({
+    profilePhoto: {
+        width: 300,
+        height: 300,
+        marginTop: "10%",
+        borderRadius: 150
+    },
     container: {
       flex: 1,
       paddingTop: 70,
