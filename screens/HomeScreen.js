@@ -1,5 +1,5 @@
 import {LinearGradient} from 'expo-linear-gradient';
-import { StyleSheet, Text, View, Image, useState, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, useState, Pressable, TextInput } from 'react-native';
 import {colors} from '../assets/Themes/colors'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ItineraryScreen from './ItineraryScreen'
@@ -9,6 +9,14 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 const HomeComp = () => {
   return (
     <View style={styles.container}>
+      <View style={styles.search}>
+        <Text style={styles.header}>Recommendations...</Text>
+        <View style={styles.searchWrapper}>
+          < TextInput style={styles.searchBar} placeholder="Search..."/>
+        </View>
+      </View>
+      <View style={styles.friendList}>
+      </View>
     </View>
   );
 }
@@ -44,8 +52,6 @@ export default function HomeScreen({navigation}) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
     background: {
       height: '100%',
@@ -53,28 +59,35 @@ export default function HomeScreen({navigation}) {
       alignItems: 'center',
       justifyContent: 'center'
     },
-    whiteButton: {
-      width: '60%', 
-      height: 51,
-      borderRadius: 26,
-      marginTop: '50%',
-      backgroundColor: 'white',
-      justifyContent: 'center',
-      alignItems: 'center'
+    searchBar: {
+      marginTop: '1%',
+      borderColor: colors.rust,
+      borderWidth: 1,
+      borderRadius: 5,
+      width: '90%',
+      height: '40%',
+      paddingLeft: 3,
+      backgroundColor: colors.saltAir
     },
-    yellowButton: {
-      width: '60%', 
-      height: 51,
-      borderRadius: 26,
-      marginTop: '10%',
-      backgroundColor: colors.budder,
-      justifyContent: 'center',
-      alignItems: 'center'
+    searchWrapper: {
+      alignItems: 'center',
     },
-    valueProp: {
+    header: {
+      fontFamily: 'Inter-Bold',
+      color: colors.rust,
+      fontSize: 20,
+      marginTop: '15%',
+      marginLeft: '5%',
+      textAlign: 'left'
+    },
+    search: {
       fontFamily: 'Inter-Bold', 
       color: colors.rust,
       fontSize: 20,
+      width: '100%',
+      height: '20%',
+      borderBottomColor: colors.lightGray,
+      borderBottomWidth: 2
     }
   });
   

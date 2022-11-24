@@ -6,8 +6,9 @@ import { useEffect } from 'react'
 import firebase, { db, auth } from "../firebase"
 
 export default function OnboardingScreen({navigation}) {
-    const [username, onChangeName] = useState(null)
+    const [username, onChangeUsername] = useState(null)
     const [password, onChangePassword] = useState(null)
+    const [name, onChangeName] = useState(null)
 
     useEffect(() => {
         const unsubscribe = firebase.auth().onAuthStateChanged(user => {
@@ -24,7 +25,8 @@ export default function OnboardingScreen({navigation}) {
         .then(userCredentials => {
             const user = userCredentials.user;
             db.collection('users').doc(user.uid).set({
-                email: user.email
+                email: user.email,
+                name: name
             })
         })
         .catch(error => alert(error.message))
@@ -35,13 +37,21 @@ export default function OnboardingScreen({navigation}) {
           <View style={styles.progressBar}>
               <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '20%'}}/>
           </View>
+          <Text style={styles.header}>WHAT IS YOUR FULL NAME?</Text>
+          
+          <LinearGradient 
+              colors={name ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
+              style={styles.inputGrad}
+              start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
+              <TextInput style={styles.inputFilled} onChangeText={onChangeName} value={name} placeholder="Email"/>
+          </LinearGradient>
           <Text style={styles.header}>WHAT IS YOUR EMAIL?</Text>
           
           <LinearGradient 
               colors={username ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
               style={styles.inputGrad}
               start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
-              <TextInput style={styles.inputFilled} onChangeText={onChangeName} value={username} placeholder="Email"/>
+              <TextInput style={styles.inputFilled} onChangeText={onChangeUsername} value={username} placeholder="Email"/>
           </LinearGradient>
   
           <Text style={styles.header}>...AND A PASSWORD</Text>
@@ -55,7 +65,7 @@ export default function OnboardingScreen({navigation}) {
   
           <LinearGradient 
               style={styles.nextButton}
-              colors={(password && username) ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
+              colors={(name && password && username) ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
               start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
               location={[0, 0.8]}>
               <Pressable style={styles.nextButtonFilled} onPress={() => {
