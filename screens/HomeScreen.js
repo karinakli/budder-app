@@ -6,7 +6,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ItineraryScreen from './ItineraryScreen'
 import ProfileScreen from './ProfileScreen'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;

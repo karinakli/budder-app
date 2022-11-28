@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View, Image, Text, Pressable, ScrollView, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, Image, Text, ScrollView, TouchableOpacity} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../assets/Themes/colors';
 import { db, auth } from "../firebase"
