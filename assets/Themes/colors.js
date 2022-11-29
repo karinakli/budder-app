@@ -9,6 +9,7 @@ export const colors = {
     himalayan: '#FBEFE7',
     lightGray: '#D7D7D7',
     mediumGray: '#B1B1B1',
+    darkGray: '#595959',
     white: '#FFFFFF',
   };
   

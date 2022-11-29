@@ -5,7 +5,7 @@ import {colors} from '../assets/Themes/colors'
 import { useEffect } from 'react'
 import firebase, { db, auth } from "../firebase"
 
-export default function OnboardingScreen({navigation}) {
+export default function SignUpScreen({navigation}) {
     const [username, onChangeUsername] = useState(null)
     const [password, onChangePassword] = useState(null)
     const [name, onChangeName] = useState(null)

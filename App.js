@@ -8,7 +8,8 @@ import {colors} from './assets/Themes/colors'
 import {useFonts} from 'expo-font'
 
 import LogInScreen from './screens/LogInScreen';
-import OnboardingScreen from './screens/OnboardingScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import DefaultScreen from './screens/DefaultScreen';
 import InterestsScreen from './screens/InterestsScreen';
 import HomeScreen from './screens/HomeScreen';
 import AddProfileScreen from './screens/AddProfileScreen';
@@ -34,8 +35,9 @@ export default function App() {
   return (
       <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Default" component={DefaultScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="Signup" component={SignUpScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Login" component={LogInScreen} options={{headerShown: false}}/>
-            <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Interests" component={InterestsScreen} options={{headerShown: false}}/>
             <Stack.Screen name="AddProfile" component={AddProfileScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Location" component={LocationScreen} options={{headerShown: false}}/>

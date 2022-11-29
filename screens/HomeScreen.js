@@ -22,6 +22,7 @@ const HomeComp = () => {
     { default: true, name: 'Andrea', distance: 'Cupertino, CA', lastMet: '2022-10-28', numMems: 172, interests: ['dancing', 'traveling', 'gaming'], image: require('../assets/Images/andrea.png')},
     { default: true, name: 'Jaime', distance: 'Stanford, CA', lastMet: '2022-11-27', numMems: 10, interests: ['hiking', 'journaling', 'soccer'], image: require('../assets/Images/jaime.png')},
     { default: true, name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')},
+  ]
   const [showModal, setModalPopup] = useState(false);
 
   const {fontScale} = useWindowDimensions();
@@ -131,8 +132,8 @@ const HomeComp = () => {
             <View style={styles.modal}>
               
               <SafeAreaView style={styles.modalBackground}>
-                <TouchableOpacity style={{width: 30, height: 30}}onPress={() => {setModalPopup(!showModal)}}>
-                  <Ionicons name="close" color={colors.rust} size={30} style={styles.closeIcon}/>
+                <TouchableOpacity style={[styles.closeIcon, {width: 30, height: 30}]} onPress={() => {setModalPopup(!showModal)}}>
+                  <Ionicons name="close" color={colors.rust} size={30}/>
                 </TouchableOpacity>
                 <Text style={[styles.header, {marginTop: 35}]}>Sort Friends</Text>
                 <View style={styles.modalRow}>
@@ -312,7 +313,7 @@ export default function HomeScreen({navigation}) {
     closeIcon: {
       position: 'absolute',
       top: windowWidth * 0.05,
-      right: windowWidth * 0.05,
+      left: windowWidth * 0.90,
     }
   });
   

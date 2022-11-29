@@ -1,65 +1,136 @@
+import { useState } from 'react';
+import { StyleSheet, View, Image, Text, TextInput, TouchableOpacity, useWindowDimensions} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
-import { useWindowDimensions } from 'react-native';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import {colors} from '../assets/Themes/colors'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { useEffect } from 'react'
+import firebase, { db, auth } from "../firebase"
 
 export default function LogInScreen({navigation}) {
-  const {fontScale} = useWindowDimensions();
-  const styles = makeStyles(fontScale)
+    const [username, onChangeUsername] = useState(null)
+    const [password, onChangePassword] = useState(null)
+
+    const {fontScale} = useWindowDimensions();
+    const styles = makeStyles(fontScale)
+
     return (
-      <View style={styles.container}>
-        <LinearGradient 
-        colors={['#FFF9F5', '#FFD883', '#FFCB58']}
-        locations={[0,0.8, 0.9]}
-        style={styles.background}>
-          <Image source={require('../assets/budder-logo.png')}/>
-          <Text style={styles.valueProp}>MAKE MEMORIES TOGETHER</Text>
-          <TouchableOpacity style={styles.whiteButton} onPress={() => navigation.replace("Home")} >
-            <Text style={{fontFamily: 'Inter-Regular', fontSize: 24 / fontScale, color: colors.rust}}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.yellowButton} onPress={() => navigation.navigate("Onboarding")}>
-            <Text style={{fontFamily: 'Inter-Regular', fontSize: 24 / fontScale, color: colors.rust}}>Sign Up</Text>
-          </TouchableOpacity>
-      </LinearGradient>
-      </View>
-    );
+        <View style={styles.container}>
+            <View style={{flexDirection: 'row'}}>
+                <Text style={styles.loginHeader}>Login</Text>
+                <Image style={styles.logo} source={require('../assets/Images/budderfly.png')}/>      
+            </View>
+            <Text style={styles.loginText}>Please sign in to continue.</Text>
+          <Text style={styles.header}>EMAIL ADDRESS</Text>
+          <LinearGradient 
+              colors={username ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
+              style={styles.inputGrad}
+              start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
+              <TextInput style={styles.inputFilled} onChangeText={onChangeUsername} value={username} placeholder="Email"/>
+          </LinearGradient>
+  
+          <Text style={styles.header}>PASSWORD</Text>
+          <LinearGradient 
+              colors={password ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
+              style={styles.inputGrad}
+              start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
+              <TextInput secureTextEntry={true} style={styles.inputFilled} onChangeText={onChangePassword} value={password} placeholder="Password"/>
+          </LinearGradient>
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <TouchableOpacity style={styles.yellowButton} onPress={() => navigation.navigate("Home")}>
+                <Text style={{fontFamily: 'Inter-Regular', fontSize: 20 / fontScale, color: colors.rust}}>Log in</Text>
+                <Image source={require('../assets/Images/arrow-right.png')} style={{width: 20, height: 20, resizeMode: 'contain', position: 'absolute', left: '80%'}}/>
+            </TouchableOpacity>
+          </View>
+          
+        </View>
+      );
   }
 
   const makeStyles = fontScale => StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
+      paddingTop: 70,
+      paddingHorizontal: 25,
+      backgroundColor: colors.white,
     },
-    background: {
-      height: '100%',
-      width: '100%',
-      alignItems: 'center',
-      justifyContent: 'center'
+    loginHeader: {
+        fontFamily: 'Inter-Bold',
+        fontSize: 48/fontScale,
+        marginTop: '40%',
+        color: colors.rust,
     },
-    whiteButton: {
-      width: '60%', 
-      height: 51,
-      borderRadius: 26,
-      marginTop: '50%',
-      backgroundColor: 'white',
-      justifyContent: 'center',
-      alignItems: 'center'
+    loginText: {
+        marginTop: 10,
+        fontFamily: 'Inter-Regular',
+        fontSize: 20 / fontScale,
+        color: colors.darkGray,
+    },
+    logo: {
+        position: 'absolute',
+        top: '55%',
+        left: '38%',
+    },
+    header: {
+        fontFamily: 'Inter-Bold',
+        color: colors.rust,
+        fontSize: 20 / fontScale,
+        marginTop: '10%',
+        textAlign: 'left'
+    },
+    input: {
+        height: 40,
+        marginHorizontal: 1,
+        marginVertical: 12,
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 5,
+        borderColor: '#606060'
+    },
+    inputFilled: {
+        height: 40,
+        width: '99.1%',
+        marginHorizontal: 1,
+        marginVertical: 12,
+        padding: 10,
+        borderRadius: 4,
+        backgroundColor: colors.white,
+        borderColor: '#606060'
+    },
+    inputGrad: {
+        marginVertical: 12,
+        height: 42,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+    },
+    nextButton: {
+        backgroundColor: '#D3D3D3',
+        height: 67,
+        width: 67,
+        borderRadius: '50%',
+        position: 'absolute',
+        top: '95%',
+        left: '85%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    nextButtonFilled: {
+        backgroundColor: '#C4C4C4',
+        height: 67,
+        width: 67,
+        borderRadius: '50%',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     yellowButton: {
-      width: '60%', 
-      height: 51,
-      borderRadius: 26,
-      marginTop: '10%',
-      backgroundColor: colors.budder,
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-    valueProp: {
-      fontFamily: 'Inter-Bold', 
-      color: colors.rust,
-      fontSize: 20 / fontScale,
-      marginTop: 20,
-    }
+        width: '60%', 
+        height: 51,
+        borderRadius: 26,
+        marginTop: '10%',
+        backgroundColor: colors.budder,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row'
+      },
   });
   
