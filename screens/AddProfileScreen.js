@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button, useWindowDimensions} from 'react-native';
+import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button, Alert, useWindowDimensions} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../assets/Themes/colors'
 import * as ImagePicker from 'expo-image-picker';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
 import { db, auth } from "../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function AddProfileScreen({navigation}) {
     const [profilePhoto, setProfilePhoto] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const {fontScale} = useWindowDimensions();
     const styles = makeStyles(fontScale)
@@ -23,26 +24,36 @@ export default function AddProfileScreen({navigation}) {
 
         if (!result.cancelled) {
             setProfilePhoto(result.uri);
-            handleSavePhoto(result.uri)
+            setLoading(true);
+            uploadImageAsync(result.uri)
         }
     }
 
     async function uploadImageAsync(uri) {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const user = auth.currentUser;
         const storage = getStorage();
-        const storageRef = ref(storage, `profiles/${auth.currentUser.uid}`);
-
-        uploadBytes(storageRef, profilePhoto).then((snapshot) => {
-            console.log(snapshot);
-        });
+        const storageRef = ref(storage, `profilePhotos/${user.uid}`);
+        uploadBytesResumable(storageRef, blob)
+            .then( async (snapshot) => {
+                console.log('Uploaded a blob or file!');
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
-    const handleSavePhoto = async (uri) => {
-        const profileURI = await uploadImageAsync(uri);
-        // const user = auth.currentUser;
-        // const userRef = doc(db, "users", user.uid);
-        // await updateDoc(userRef, {
-        //     profilePic: profileURI
-        // });
+    async function saveUrl() {
+        const user = auth.currentUser;
+        const storage = getStorage();
+        const storageRef = ref(storage, `profilePhotos/${user.uid}`);
+        const url = await getDownloadURL(storageRef);
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+            profilePhoto: url
+        });
     }
 
     return (
@@ -55,6 +66,7 @@ export default function AddProfileScreen({navigation}) {
             {profilePhoto ? <Image source={{ uri: profilePhoto }} style={styles.profilePhoto} />
              : <Image style={{marginTop: '10%'}} source={require('../assets/Images/add-photo.png')}/> }
           </TouchableOpacity>
+          <Text>{loading ? "Uploading ..." : ""}</Text>
           <TouchableOpacity style={styles.bottomText} onPress={() => navigation.navigate("Location")}>
             {profilePhoto ? <Text style={styles.bottomText}></Text>: <Text style={styles.bottomText}>skip for now</Text>}
           </TouchableOpacity>
@@ -66,7 +78,7 @@ export default function AddProfileScreen({navigation}) {
               location={[0, 0.8]}>
               <Pressable style={styles.nextButtonFilled} onPress={() => {
                 if (profilePhoto) {
-                    // handleSavePhoto()
+                    saveUrl()
                 }
                 navigation.navigate("Location")
                 }}>
