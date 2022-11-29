@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button} from 'react-native';
+import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button, useWindowDimensions} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../assets/Themes/colors'
 import * as ImagePicker from 'expo-image-picker';
@@ -9,6 +9,9 @@ import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function AddProfileScreen({navigation}) {
     const [profilePhoto, setProfilePhoto] = useState(null);
+
+    const {fontScale} = useWindowDimensions();
+    const styles = makeStyles(fontScale)
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -45,7 +48,7 @@ export default function AddProfileScreen({navigation}) {
     return (
         <View style={styles.container}>
           <View style={styles.progressBar}>
-              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '60%'}}/>
+              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '60%', borderRadius: 5,}}/>
           </View>
           <Text style={styles.header}>ADD A PROFILE PHOTO</Text>
           <TouchableOpacity onPress={pickImage}>
@@ -53,7 +56,7 @@ export default function AddProfileScreen({navigation}) {
              : <Image style={{marginTop: '10%'}} source={require('../assets/Images/add-photo.png')}/> }
           </TouchableOpacity>
           <TouchableOpacity style={styles.bottomText} onPress={() => navigation.navigate("Location")}>
-            <Text style={styles.bottomText}>skip for now</Text>
+            {profilePhoto ? <Text style={styles.bottomText}></Text>: <Text style={styles.bottomText}>skip for now</Text>}
           </TouchableOpacity>
           
           <LinearGradient 
@@ -75,12 +78,14 @@ export default function AddProfileScreen({navigation}) {
       );
   }
 
-  const styles = StyleSheet.create({
+  const makeStyles = fontScale => StyleSheet.create({
     profilePhoto: {
-        width: 300,
-        height: 300,
+        width: 200,
+        height: 200,
         marginTop: "10%",
-        borderRadius: 150
+        borderRadius: 150,
+        borderWidth: 2,
+        borderColor: colors.rust,
     },
     container: {
       flex: 1,
@@ -94,18 +99,19 @@ export default function AddProfileScreen({navigation}) {
         flexDirection: "row",
         width: '100%',
         backgroundColor: colors.lightGray,
+        borderRadius: 5,
     },
     header: {
         fontFamily: 'Inter-Bold',
         color: colors.rust,
-        fontSize: 20,
+        fontSize: 20 / fontScale,
         marginTop: '15%',
         textAlign: 'center'
     },
     bottomText: {
         fontFamily: 'Inter-Regular',
         color: colors.rust,
-        fontSize: 16,
+        fontSize: 16 / fontScale,
         textDecorationLine: 'underline',
         position: 'absolute',
         top: '99%',

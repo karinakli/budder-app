@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {LinearGradient} from 'expo-linear-gradient';
-import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity, FlatList, Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity, FlatList, Dimensions, Image, useWindowDimensions, Modal } from 'react-native';
 import {colors} from '../assets/Themes/colors'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ItineraryScreen from './ItineraryScreen'
@@ -12,9 +12,14 @@ const windowHeight = Dimensions.get('window').height;
 
 const HomeComp = () => {
   const filters = ['name', 'distance', 'lastMet', 'numMems']
-  const [filter, setFilter] = useState(filters[0]);
+  const [filter, setFilter] = useState(filters[0]); // this is the active filter for the list
+  const [showModal, setModalPopup] = useState(false);
+
+  const {fontScale} = useWindowDimensions();
+  const styles = makeStyles(fontScale)
+
   const friends = [
-    {name: 'Karina', distance: 'Irvine, CA', lastMet: '2021-10-23', numMems: 44, interests: ['baking', 'painting', 'hiking'], image: require('../assets/Images/karina.png')},
+    {name: 'Karina', distance: 'Cypress, CA', lastMet: '2021-10-23', numMems: 44, interests: ['baking', 'painting', 'hiking'], image: require('../assets/Images/karina.png')},
     {name: 'Andrea', distance: 'Cupertino, CA', lastMet: '2022-10-28', numMems: 172, interests: ['dancing', 'traveling', 'gaming'], image: require('../assets/Images/andrea.png')},
     {name: 'Jaime', distance: 'Stanford, CA', lastMet: '2022-11-27', numMems: 10, interests: ['hiking', 'journaling', 'soccer'], image: require('../assets/Images/jaime.png')},
     {name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')},
@@ -58,7 +63,7 @@ const HomeComp = () => {
       
     )
   }
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.search}>
@@ -66,9 +71,10 @@ const HomeComp = () => {
         <View style={styles.searchWrapper}>
           < TextInput style={styles.searchBar} placeholder="Search..."/>
         </View>
-        <TouchableOpacity style={styles.filterButton}>
+        <TouchableOpacity style={styles.filterButton} onPress={() => {setModalPopup(true)}}>
             <Text style={styles.filterText}>{filter.toUpperCase()}</Text>
-            <Ionicons name="arrow-down" color={colors.rust}/>
+            {/* flip the arrow when modal opens up doesn't work */}
+            {showModal ? <Ionicons name="arrow-up" color={colors.rust}/>: <Ionicons name="arrow-down" color={colors.rust}/>}
         </TouchableOpacity>
         
       </View>
@@ -77,8 +83,44 @@ const HomeComp = () => {
           data={friends}
           renderItem={renderFriend}
           keyExtractor={item => item.id}
+          showsVerticalScrollIndicator={false}
         />
       </View>
+      <Modal
+            animationType={'fade'}
+            transparent={true}
+            visible={showModal}
+            onRequestClose={() => {setModalPopup(!showModal)}}
+        >
+            <View style={styles.modal}>
+              
+              <SafeAreaView style={styles.modalBackground}>
+                <TouchableOpacity style={{width: 30, height: 30}}onPress={() => {setModalPopup(!showModal)}}>
+                  <Ionicons name="close" color={colors.rust} size={30} style={styles.closeIcon}/>
+                </TouchableOpacity>
+                <Text style={[styles.header, {marginTop: 35}]}>Sort Friends</Text>
+                <View style={styles.modalRow}>
+                  <Text style={styles.modalText}>BY NAME (ALPHABETICAL)</Text>
+                  {/* selecting filters and icon switching doesn't work yet */}
+                  { (filter == 'name') ? <Ionicons name="radio-button-on" color={colors.rust} size={24}/> :
+                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>}
+                  {console.log(filter == 'name')}
+                </View>
+                <View style={styles.modalRow}>
+                  <Text style={styles.modalText}>BY DISTANCE</Text>
+                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>
+                </View>
+                <View style={styles.modalRow}>
+                  <Text style={styles.modalText}>BY LAST MET</Text>
+                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>
+                </View>
+                <View style={styles.modalRow}>
+                  <Text style={styles.modalText}>BY NUMBER OF MEMORIES</Text>
+                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>
+                </View>
+              </SafeAreaView>
+            </View>
+        </Modal>
     </SafeAreaView>
   );
 }
@@ -111,7 +153,7 @@ export default function HomeScreen({navigation}) {
     );
   }
 
-  const styles = StyleSheet.create({
+  const makeStyles = fontScale => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.white,
@@ -139,7 +181,7 @@ export default function HomeScreen({navigation}) {
     header: {
       fontFamily: 'Inter-Bold',
       color: colors.rust,
-      fontSize: 24,
+      fontSize: 24 / fontScale,
       marginTop: '4%',
       marginLeft: '5%',
       textAlign: 'left'
@@ -147,7 +189,7 @@ export default function HomeScreen({navigation}) {
     search: {
       fontFamily: 'Inter-Bold', 
       color: colors.rust,
-      fontSize: 20,
+      fontSize: 20 / fontScale,
       width: '100%',
       height: '20%',
       borderBottomColor: colors.lightGray,
@@ -168,18 +210,18 @@ export default function HomeScreen({navigation}) {
     filterText: {
       fontFamily: 'Inter-Regular',
       color: colors.rust,
-      fontSize: 12,
+      fontSize: 12 / fontScale,
       marginRight: 5,
     },
     paragraph: {
       fontFamily: 'Inter-Regular',
       color: colors.rust,
-      fontSize: 14,
+      fontSize: 14 / fontScale,
     },  
     boldParagraph: {
       fontFamily: 'Inter-Bold',
       color: colors.rust,
-      fontSize: 14,
+      fontSize: 14 / fontScale,
     },
     friendList: {
       alignItems: 'center',
@@ -205,8 +247,36 @@ export default function HomeScreen({navigation}) {
     },
     friendHeader: {
       fontFamily: 'Inter-Bold',
-      fontSize: 24,
+      fontSize: 24 / fontScale,
       color: colors.rust,
     }, 
+    modal: {
+      flex: 1,
+      backgroundColor: '#000000aa',
+      justifyContent: 'flex-end',
+    },
+    modalBackground: {
+      backgroundColor: 'white',
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+      paddingBottom: 60,
+    },
+    modalText: {
+      fontFamily: 'Inter-Regular',
+      color: colors.rust,
+      fontSize: 16 / fontScale,
+    },
+    modalRow: {
+      flexDirection: 'row', 
+      justifyContent: 'space-between', 
+      paddingHorizontal: '5%', 
+      alignItems: 'center',
+      marginTop: 20,
+    },
+    closeIcon: {
+      position: 'absolute',
+      top: windowWidth * 0.05,
+      right: windowWidth * 0.05,
+    }
   });
   

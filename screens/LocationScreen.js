@@ -1,14 +1,17 @@
-import { useState } from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, View, Image, Text, TouchableOpacity, useWindowDimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../assets/Themes/colors'
 
 import * as Location from 'expo-location'
 
 export default function LocationScreen({navigation}) {
-    const [locationAllowed, setLocationAllowed] = useState(true);
+    const [locationAllowed, setLocationAllowed] = useState(false);
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+
+    const {fontScale} = useWindowDimensions();
+    const styles = makeStyles(fontScale)
 
     async function getLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -24,12 +27,19 @@ export default function LocationScreen({navigation}) {
         }
         let address = await Location.reverseGeocodeAsync(locationObjForGeocode)
         setLocation(address[0].name);
+        setLocationAllowed(true);
     }
+
+    useEffect(() => {
+        if (locationAllowed) {
+            navigation.navigate("Confirmation")
+        }
+    }, [locationAllowed]) 
 
     return (
         <View style={styles.container}>
           <View style={styles.progressBar}>
-              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '80%'}}/>
+              <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '80%', borderRadius: 5}}/>
           </View>
           <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '50%'}}>
             <Image source={require('../assets/Images/location.png')}/>
@@ -37,11 +47,11 @@ export default function LocationScreen({navigation}) {
             <Text style={styles.paragraph}>Get more precise friendship recommendations without the unnecessary effort.</Text>
             <Text style={styles.paragraph}>{location}</Text>
             <TouchableOpacity style={styles.yellowButton} onPress={getLocation}>
-                <Text style={{fontFamily: 'Inter-Regular', fontSize: 20, color: colors.rust}}>Allow Location</Text>
+                <Text style={{fontFamily: 'Inter-Regular', fontSize: 20 / fontScale, color: colors.rust}}>Allow Location</Text>
             </TouchableOpacity>
           </View>
           
-          {(locationAllowed) ? (
+          {/* {(locationAllowed) ? (
             <LinearGradient 
                 style={styles.nextButton}
                 colors={[colors.budder, colors.maroon]}
@@ -56,13 +66,13 @@ export default function LocationScreen({navigation}) {
             <View style={styles.nextButton}>
                 <Image source={require('../assets/Images/arrow-right.png')}/>
             </View>
-        )}
+        )} */}
 
         </View>
       );
   }
 
-  const styles = StyleSheet.create({
+  const makeStyles = fontScale => StyleSheet.create({
     container: {
       flex: 1,
       paddingTop: 70,
@@ -75,18 +85,19 @@ export default function LocationScreen({navigation}) {
         flexDirection: "row",
         width: '100%',
         backgroundColor: colors.lightGray,
+        borderRadius: 5,
     },
     header: {
         fontFamily: 'Inter-Bold',
         color: colors.rust,
-        fontSize: 20,
+        fontSize: 20 / fontScale,
         marginTop: '15%',
         textAlign: 'center'
     },
     paragraph: {
         fontFamily: 'Inter-Regular',
         color: colors.rust,
-        fontSize: 16,
+        fontSize: 16 / fontScale,
         textAlign: 'center',
         marginTop: 16,
         width: 300,
