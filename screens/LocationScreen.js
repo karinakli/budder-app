@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../assets/Themes/colors'
+import { db, auth } from "../firebase"
+import { doc, updateDoc } from "firebase/firestore";
 
 import * as Location from 'expo-location'
 
@@ -9,6 +11,15 @@ export default function LocationScreen({navigation}) {
     const [locationAllowed, setLocationAllowed] = useState(true);
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+
+    const saveLocation = async (lat, long) => {
+        const user = auth.currentUser;
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+            lastLat: lat,
+            lastLong: long
+        });
+    }
 
     async function getLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -24,6 +35,9 @@ export default function LocationScreen({navigation}) {
         }
         let address = await Location.reverseGeocodeAsync(locationObjForGeocode)
         setLocation(address[0].name);
+        const user = auth.currentUser;
+        const userRef = doc(db, "users", user.uid);
+        saveLocation(location.coords.latitude, location.coords.longitude);
     }
 
     return (

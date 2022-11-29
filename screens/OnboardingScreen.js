@@ -43,7 +43,7 @@ export default function OnboardingScreen({navigation}) {
               colors={name ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
               style={styles.inputGrad}
               start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
-              <TextInput style={styles.inputFilled} onChangeText={onChangeName} value={name} placeholder="Email"/>
+              <TextInput style={styles.inputFilled} onChangeText={onChangeName} value={name} placeholder="Name"/>
           </LinearGradient>
           <Text style={styles.header}>WHAT IS YOUR EMAIL?</Text>
           

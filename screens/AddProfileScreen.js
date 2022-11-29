@@ -20,26 +20,35 @@ export default function AddProfileScreen({navigation}) {
 
         if (!result.cancelled) {
             setProfilePhoto(result.uri);
-            handleSavePhoto(result.uri)
+            url = await uploadImageAsync(result.uri)
+            console.log(url)
         }
     }
 
+    
     async function uploadImageAsync(uri) {
-        const storage = getStorage();
-        const storageRef = ref(storage, `profiles/${auth.currentUser.uid}`);
-
-        uploadBytes(storageRef, profilePhoto).then((snapshot) => {
-            console.log(snapshot);
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function(e) {
+                console.log(e);
+                reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', uri, true);
+            xhr.send(null);
         });
-    }
+    
+        const ref = firebase
+        .storage()
+        .ref()
+        .child(uuid.v4());
+        const snapshot = await ref.put(blob);
+        blob.close();
 
-    const handleSavePhoto = async (uri) => {
-        const profileURI = await uploadImageAsync(uri);
-        // const user = auth.currentUser;
-        // const userRef = doc(db, "users", user.uid);
-        // await updateDoc(userRef, {
-        //     profilePic: profileURI
-        // });
+        return await snapshot.ref.getDownloadURL();
     }
 
     return (
