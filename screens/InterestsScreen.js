@@ -52,13 +52,13 @@ export default function InterestsScreen({navigation}) {
     }
 
     const listInterests = data.interests.map((item) =>
-        <ListItem name={item}/>
+        <ListItem key={item} name={item}/>
     );
     const listMusic = data.music.map((item) =>
-        <ListItem name={item}/>
+        <ListItem key={item} name={item}/>
     );
     const listFoods = data.foods.map((item) =>
-        <ListItem name={item}/>
+        <ListItem key={item} name={item}/>
     );
 
     return (

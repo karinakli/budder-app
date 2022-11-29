@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import {LinearGradient} from 'expo-linear-gradient';
 import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity, FlatList, Dimensions, Image } from 'react-native';
 import {colors} from '../assets/Themes/colors'
@@ -6,6 +6,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ItineraryScreen from './ItineraryScreen'
 import ProfileScreen from './ProfileScreen'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { collection, query, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -13,12 +16,45 @@ const windowHeight = Dimensions.get('window').height;
 const HomeComp = () => {
   const filters = ['name', 'distance', 'lastMet', 'numMems']
   const [filter, setFilter] = useState(filters[0]);
-  const friends = [
-    {name: 'Karina', distance: 'Irvine, CA', lastMet: '2021-10-23', numMems: 44, interests: ['baking', 'painting', 'hiking'], image: require('../assets/Images/karina.png')},
-    {name: 'Andrea', distance: 'Cupertino, CA', lastMet: '2022-10-28', numMems: 172, interests: ['dancing', 'traveling', 'gaming'], image: require('../assets/Images/andrea.png')},
-    {name: 'Jaime', distance: 'Stanford, CA', lastMet: '2022-11-27', numMems: 10, interests: ['hiking', 'journaling', 'soccer'], image: require('../assets/Images/jaime.png')},
-    {name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')},
+  // TODO: Remove
+  let starterfriends = [
+    { default: true, name: 'Karina', distance: 'Irvine, CA', lastMet: '2021-10-23', numMems: 44, interests: ['baking', 'painting', 'hiking'], image: require('../assets/Images/karina.png')},
+    { default: true, name: 'Andrea', distance: 'Cupertino, CA', lastMet: '2022-10-28', numMems: 172, interests: ['dancing', 'traveling', 'gaming'], image: require('../assets/Images/andrea.png')},
+    { default: true, name: 'Jaime', distance: 'Stanford, CA', lastMet: '2022-11-27', numMems: 10, interests: ['hiking', 'journaling', 'soccer'], image: require('../assets/Images/jaime.png')},
+    { default: true, name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')},
   ]
+  const [friends, setFriends] = useState(null)
+
+  useEffect(() => { loadProfilesFromFirebase() }, [])
+
+  async function loadProfilesFromFirebase() {
+    let responseObjects = []
+    const usersRef = collection(db, "users");
+    const q = query(usersRef);
+    const querySnapshot = await getDocs(q, );
+    querySnapshot.forEach((doc) => {
+      let data = doc.data()
+      responseObjects = [...responseObjects, data]
+    })
+    let newFriendsArrayPromise = await transformServerResponseObjects(responseObjects)
+      .then(newFriends => setFriends(newFriends))
+      .catch(err => console.log(err))
+  }
+
+  async function transformServerResponseObjects(responseObjects) {
+    let newFriendObjects = []
+    for (let i = 0; i < responseObjects.length; i++) {
+      let friendResponse = responseObjects[i]
+      let newFriendObj = { name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')}
+      newFriendObj.name = friendResponse.name
+      newFriendObj.image = friendResponse.profilePhoto
+      newFriendObj.distance = friendResponse.address
+      newFriendObj.interests = friendResponse.interests
+      newFriendObjects = [...newFriendObjects, newFriendObj]
+    }
+    return [...newFriendObjects, ...starterfriends]
+  }
+
   
   const renderFriend = ({item}) => {
     const getInterests = () => {
@@ -36,13 +72,14 @@ const HomeComp = () => {
       return interests;
     }
     return (
-      <TouchableOpacity>
+      <TouchableOpacity key={item.name}>
           <LinearGradient 
               colors={[colors.budder, colors.maroon]}
               style={styles.friendContainer}
               start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
             <View style={styles.innerContainer}>
-            <Image source={item.image} style={{marginRight: 15}}/>
+            {/* TODO - fix this default thing when we get rid of fake images.*/}
+            <Image source={ item.default ? item.image : {uri: item.image}} style={{marginRight: 15, width: '27%', height: '100%', borderRadius: "50%"}}/>
             <View style={{flexDirection: 'column', flex: 1}}>
               <Text style={styles.friendHeader}>{item.name.toUpperCase()}</Text>
               <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>

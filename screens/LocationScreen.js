@@ -28,16 +28,16 @@ export default function LocationScreen({navigation}) {
         return;
         }
         let location = await Location.getCurrentPositionAsync({});
-        console.log(location)
         let locationObjForGeocode = {
             'latitude': location.coords.latitude,
             'longitude': location.coords.longitude
         }
         let address = await Location.reverseGeocodeAsync(locationObjForGeocode)
         setLocation(address[0].name);
+        console.log(location)
         const user = auth.currentUser;
         const userRef = doc(db, "users", user.uid);
-        saveLocation(location.coords.latitude, location.coords.longitude);
+        saveLocation(location.coords.latitude, location.coords.longitude, address);
     }
 
     return (

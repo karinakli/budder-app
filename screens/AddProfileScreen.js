@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button} from 'react-native';
+import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button, Alert} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../assets/Themes/colors'
 import * as ImagePicker from 'expo-image-picker';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
 import { db, auth } from "../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function AddProfileScreen({navigation}) {
     const [profilePhoto, setProfilePhoto] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -20,35 +21,36 @@ export default function AddProfileScreen({navigation}) {
 
         if (!result.cancelled) {
             setProfilePhoto(result.uri);
-            url = await uploadImageAsync(result.uri)
-            console.log(url)
+            setLoading(true);
+            uploadImageAsync(result.uri)
         }
     }
 
-    
     async function uploadImageAsync(uri) {
-        const blob = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onload = function() {
-                resolve(xhr.response);
-            };
-            xhr.onerror = function(e) {
-                console.log(e);
-                reject(new TypeError('Network request failed'));
-            };
-            xhr.responseType = 'blob';
-            xhr.open('GET', uri, true);
-            xhr.send(null);
-        });
-    
-        const ref = firebase
-        .storage()
-        .ref()
-        .child(uuid.v4());
-        const snapshot = await ref.put(blob);
-        blob.close();
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const user = auth.currentUser;
+        const storage = getStorage();
+        const storageRef = ref(storage, `profilePhotos/${user.uid}`);
+        uploadBytesResumable(storageRef, blob)
+            .then( async (snapshot) => {
+                console.log('Uploaded a blob or file!');
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
-        return await snapshot.ref.getDownloadURL();
+    async function saveUrl() {
+        const user = auth.currentUser;
+        const storage = getStorage();
+        const storageRef = ref(storage, `profilePhotos/${user.uid}`);
+        const url = await getDownloadURL(storageRef);
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+            profilePhoto: url
+        });
     }
 
     return (
@@ -61,6 +63,7 @@ export default function AddProfileScreen({navigation}) {
             {profilePhoto ? <Image source={{ uri: profilePhoto }} style={styles.profilePhoto} />
              : <Image style={{marginTop: '10%'}} source={require('../assets/Images/add-photo.png')}/> }
           </TouchableOpacity>
+          <Text>{loading ? "Uploading ..." : ""}</Text>
           <TouchableOpacity style={styles.bottomText} onPress={() => navigation.navigate("Location")}>
             <Text style={styles.bottomText}>skip for now</Text>
           </TouchableOpacity>
@@ -72,7 +75,7 @@ export default function AddProfileScreen({navigation}) {
               location={[0, 0.8]}>
               <Pressable style={styles.nextButtonFilled} onPress={() => {
                 if (profilePhoto) {
-                    // handleSavePhoto()
+                    saveUrl()
                 }
                 navigation.navigate("Location")
                 }}>
