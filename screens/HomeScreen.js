@@ -22,6 +22,7 @@ const HomeComp = () => {
     { default: true, name: 'Andrea', distance: 'Cupertino, CA', lastMet: '2022-10-28', numMems: 172, interests: ['dancing', 'traveling', 'gaming'], image: require('../assets/Images/andrea.png')},
     { default: true, name: 'Jaime', distance: 'Stanford, CA', lastMet: '2022-11-27', numMems: 10, interests: ['hiking', 'journaling', 'soccer'], image: require('../assets/Images/jaime.png')},
     { default: true, name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')},
+  ]
   const [showModal, setModalPopup] = useState(false);
 
   const {fontScale} = useWindowDimensions();
@@ -35,7 +36,7 @@ const HomeComp = () => {
     let responseObjects = []
     const usersRef = collection(db, "users");
     const q = query(usersRef);
-    const querySnapshot = await getDocs(q, );
+    const querySnapshot = await getDocs(q,);
     querySnapshot.forEach((doc) => {
       let data = doc.data()
       responseObjects = [...responseObjects, data]
