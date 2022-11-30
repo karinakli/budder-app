@@ -15,6 +15,21 @@ export default function LogInScreen({navigation}) {
     const {fontScale} = useWindowDimensions();
     const styles = makeStyles(fontScale)
 
+    useEffect(() => {
+        const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                navigation.replace("Home")
+            }
+        })
+        return unsubscribe
+    },[])
+
+    const handleSignUp = () => {
+        firebase.auth()
+        .signInWithEmailAndPassword(username, password)
+        .catch(error => alert(error.message))
+    }
+
     return (
         <View style={styles.container}>
             <View style={{flexDirection: 'row'}}>
@@ -38,7 +53,10 @@ export default function LogInScreen({navigation}) {
               <TextInput secureTextEntry={true} style={styles.inputFilled} onChangeText={onChangePassword} value={password} placeholder="Password"/>
           </LinearGradient>
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <TouchableOpacity style={styles.yellowButton} onPress={() => navigation.navigate("Home")}>
+            <TouchableOpacity style={styles.yellowButton} onPress={() => {
+                if (password && username) {
+                    handleSignUp()
+                }}}>
                 <Text style={{fontFamily: 'Inter-Regular', fontSize: 20 / fontScale, color: colors.rust}}>Log in</Text>
                 <Image source={require('../assets/Images/arrow-right.png')} style={{width: 20, height: 20, resizeMode: 'contain', position: 'absolute', left: '80%'}}/>
             </TouchableOpacity>
