@@ -17,13 +17,6 @@ const windowHeight = Dimensions.get('window').height;
 const HomeComp = () => {
   const filters = ['NAME', 'DISTANCE', 'LAST MET', 'MEMS']
   const [filter, setFilter] = useState('NAME');
-  // TODO: Remove
-  let starterfriends = [
-    { default: true, name: 'Karina', address: 'Irvine, CA', lastMet: '2021-10-23', numMems: 44, interests: ['baking', 'painting', 'hiking'], image: require('../assets/Images/karina.png')},
-    { default: true, name: 'Andrea', address: 'Cupertino, CA', lastMet: '2022-10-28', numMems: 172, interests: ['dancing', 'traveling', 'gaming'], image: require('../assets/Images/andrea.png')},
-    { default: true, name: 'Jaime', address: 'Stanford, CA', lastMet: '2022-11-27', numMems: 10, interests: ['hiking', 'journaling', 'soccer'], image: require('../assets/Images/jaime.png')},
-    { default: true, name: 'Daniel', address: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')},
-  ]
   const [showModal, setModalPopup] = useState(false);
   let latLong = [];
 
@@ -38,13 +31,13 @@ const HomeComp = () => {
     if (friends) {
       sortFriends()
     }
-  }, [filter])
+  }, [filter, friends])
 
   const sortFriends = () => {
     if (filter === 'NAME') {
       setFriends(friends.sort((a, b) => (a.name > b.name) ? 1 : -1))
     } if (filter === 'DISTANCE') {
-      setFriends(friends.sort((a, b) => (a.distance < b.distance) ? 1 : -1))
+      setFriends(friends.sort((a, b) => (a.distance > b.distance) ? 1 : -1))
     } if (filter === 'LAST MET') {
       setFriends(friends.sort((a, b) => (Math.random() > 0.5) ? 1 : -1))
     } if (filter === 'MEMS') {
@@ -71,7 +64,6 @@ const HomeComp = () => {
         setFriends(newFriends)
       })
       .catch(err => console.log(err))
-      sortFriends()
   }
 
   async function transformServerResponseObjects(responseObjects) {
@@ -90,8 +82,7 @@ const HomeComp = () => {
       newFriendObj.long = friendResponse.lastLong
       newFriendObjects = [...newFriendObjects, newFriendObj]
     }
-    // TODO: Remove starterfriends
-    return [...newFriendObjects, ...starterfriends]
+    return newFriendObjects
   }
 
   
@@ -123,7 +114,7 @@ const HomeComp = () => {
               <Text style={styles.friendHeader}>{item.name.toUpperCase()}</Text>
               <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text style={styles.paragraph}>{item.address}</Text>
-                <Text style={styles.boldParagraph}>{item.numMems} mems</Text>
+                <Text style={styles.boldParagraph}>{ (filter !== "DISTANCE") ? item.numMems + " mems": item.distance + " miles"}</Text>
               </View>
               <Text style={[styles.paragraph, {marginTop: 20}]}>{getInterests()}</Text>
             </View>

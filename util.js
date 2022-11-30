@@ -20,8 +20,9 @@ function distanceBetweenCoords(lat1, lat2, lon1, lon2) {
     // Radius of earth in kilometers. Use 3956
     // for miles
     let r = 3956;
-
-    return(c * r);
+    distance = c * r;
+    // round distance to 2 decimal places
+    return distance.toFixed(2);
 }
 
 export default distanceBetweenCoords;
