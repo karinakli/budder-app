@@ -11,6 +11,7 @@ import LogInScreen from './screens/LogInScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import InterestsScreen from './screens/InterestsScreen';
 import HomeScreen from './screens/HomeScreen';
+import SignInScreen from './screens/SignInScreen';
 import AddProfileScreen from './screens/AddProfileScreen';
 import LocationScreen from './screens/LocationScreen';
 import ConfirmationScreen from './screens/ConfirmationScreen'
@@ -35,6 +36,7 @@ export default function App() {
       <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Login" component={LogInScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="SignIn" component={SignInScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Interests" component={InterestsScreen} options={{headerShown: false}}/>
             <Stack.Screen name="AddProfile" component={AddProfileScreen} options={{headerShown: false}}/>

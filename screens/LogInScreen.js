@@ -14,7 +14,7 @@ export default function LogInScreen({navigation}) {
         style={styles.background}>
           <Image source={require('../assets/budder-logo.png')}/>
           <Text style={styles.valueProp}>MAKE MEMORIES TOGETHER</Text>
-          <TouchableOpacity style={styles.whiteButton} onPress={() => navigation.replace("Home")} >
+          <TouchableOpacity style={styles.whiteButton} onPress={() => navigation.navigate("SignIn")} >
             <Text style={{fontFamily: 'Inter-Regular', fontSize: 24 / fontScale, color: colors.rust}}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.yellowButton} onPress={() => navigation.navigate("Onboarding")}>

@@ -7,23 +7,25 @@ import ItineraryScreen from './ItineraryScreen'
 import ProfileScreen from './ProfileScreen'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { collection, query, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
+import distanceBetweenCoords from '../util';
 
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const HomeComp = () => {
-  const filters = ['name', 'distance', 'lastMet', 'numMems']
-  const [filter, setFilter] = useState(filters[0]);
+  const filters = ['NAME', 'DISTANCE', 'LAST MET', 'MEMS']
+  const [filter, setFilter] = useState('NAME');
   // TODO: Remove
   let starterfriends = [
-    { default: true, name: 'Karina', distance: 'Irvine, CA', lastMet: '2021-10-23', numMems: 44, interests: ['baking', 'painting', 'hiking'], image: require('../assets/Images/karina.png')},
-    { default: true, name: 'Andrea', distance: 'Cupertino, CA', lastMet: '2022-10-28', numMems: 172, interests: ['dancing', 'traveling', 'gaming'], image: require('../assets/Images/andrea.png')},
-    { default: true, name: 'Jaime', distance: 'Stanford, CA', lastMet: '2022-11-27', numMems: 10, interests: ['hiking', 'journaling', 'soccer'], image: require('../assets/Images/jaime.png')},
-    { default: true, name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')},
+    { default: true, name: 'Karina', address: 'Irvine, CA', lastMet: '2021-10-23', numMems: 44, interests: ['baking', 'painting', 'hiking'], image: require('../assets/Images/karina.png')},
+    { default: true, name: 'Andrea', address: 'Cupertino, CA', lastMet: '2022-10-28', numMems: 172, interests: ['dancing', 'traveling', 'gaming'], image: require('../assets/Images/andrea.png')},
+    { default: true, name: 'Jaime', address: 'Stanford, CA', lastMet: '2022-11-27', numMems: 10, interests: ['hiking', 'journaling', 'soccer'], image: require('../assets/Images/jaime.png')},
+    { default: true, name: 'Daniel', address: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')},
   ]
   const [showModal, setModalPopup] = useState(false);
+  let latLong = [];
 
   const {fontScale} = useWindowDimensions();
   const styles = makeStyles(fontScale)
@@ -32,6 +34,25 @@ const HomeComp = () => {
 
   useEffect(() => { loadProfilesFromFirebase() }, [])
 
+  useEffect(() => {
+    if (friends) {
+      sortFriends()
+    }
+  }, [filter])
+
+  const sortFriends = () => {
+    if (filter === 'NAME') {
+      setFriends(friends.sort((a, b) => (a.name > b.name) ? 1 : -1))
+    } if (filter === 'DISTANCE') {
+      setFriends(friends.sort((a, b) => (a.distance < b.distance) ? 1 : -1))
+    } if (filter === 'LAST MET') {
+      setFriends(friends.sort((a, b) => (Math.random() > 0.5) ? 1 : -1))
+    } if (filter === 'MEMS') {
+      setFriends(friends.sort((a, b) => (a.numMems > b.numMems) ? 1 : -1))
+    }
+  }
+
+
   async function loadProfilesFromFirebase() {
     let responseObjects = []
     const usersRef = collection(db, "users");
@@ -39,24 +60,37 @@ const HomeComp = () => {
     const querySnapshot = await getDocs(q,);
     querySnapshot.forEach((doc) => {
       let data = doc.data()
-      responseObjects = [...responseObjects, data]
+      if (doc.id !== auth.currentUser.uid) {
+        responseObjects = [...responseObjects, data]
+      } else {
+        latLong = [data.lastLat, data.lastLong]
+      }
     })
-    let newFriendsArrayPromise = await transformServerResponseObjects(responseObjects)
-      .then(newFriends => setFriends(newFriends))
+    transformServerResponseObjects(responseObjects)
+      .then(newFriends =>{
+        setFriends(newFriends)
+      })
       .catch(err => console.log(err))
+      sortFriends()
   }
 
   async function transformServerResponseObjects(responseObjects) {
     let newFriendObjects = []
     for (let i = 0; i < responseObjects.length; i++) {
       let friendResponse = responseObjects[i]
-      let newFriendObj = { name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')}
+      let randomNumMems = Math.floor(Math.random() * 20)
+      let newFriendObj = { name: 'N/A', distance: '', lastMet: '2022-11-28', numMems: randomNumMems, interests: [], image: require('../assets/Images/daniel.png')}
       newFriendObj.name = friendResponse.name
       newFriendObj.image = friendResponse.profilePhoto
-      newFriendObj.distance = friendResponse.address
+      newFriendObj.address = friendResponse.address
       newFriendObj.interests = friendResponse.interests
+      let distance = distanceBetweenCoords(latLong[0], friendResponse.lastLat, latLong[1], friendResponse.lastLong)
+      newFriendObj.distance = distance
+      newFriendObj.lat = friendResponse.lastLat
+      newFriendObj.long = friendResponse.lastLong
       newFriendObjects = [...newFriendObjects, newFriendObj]
     }
+    // TODO: Remove starterfriends
     return [...newFriendObjects, ...starterfriends]
   }
 
@@ -88,7 +122,7 @@ const HomeComp = () => {
             <View style={{flexDirection: 'column', flex: 1}}>
               <Text style={styles.friendHeader}>{item.name.toUpperCase()}</Text>
               <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={styles.paragraph}>{item.distance}</Text>
+                <Text style={styles.paragraph}>{item.address}</Text>
                 <Text style={styles.boldParagraph}>{item.numMems} mems</Text>
               </View>
               <Text style={[styles.paragraph, {marginTop: 20}]}>{getInterests()}</Text>
@@ -96,9 +130,12 @@ const HomeComp = () => {
           </View>       
         </LinearGradient>
       </TouchableOpacity>
-      
-      
     )
+  }
+
+  const changeFilter = (newFilter) => {
+    setFilter(newFilter)
+    setModalPopup(!showModal)
   }
   
   return (
@@ -109,8 +146,7 @@ const HomeComp = () => {
           < TextInput style={styles.searchBar} placeholder="Search..."/>
         </View>
         <TouchableOpacity style={styles.filterButton} onPress={() => {setModalPopup(true)}}>
-            <Text style={styles.filterText}>{filter.toUpperCase()}</Text>
-            {/* flip the arrow when modal opens up doesn't work */}
+            <Text style={styles.filterText}>{filter}</Text>
             {showModal ? <Ionicons name="arrow-up" color={colors.rust}/>: <Ionicons name="arrow-down" color={colors.rust}/>}
         </TouchableOpacity>
         
@@ -132,28 +168,33 @@ const HomeComp = () => {
             <View style={styles.modal}>
               
               <SafeAreaView style={styles.modalBackground}>
-                <TouchableOpacity style={{width: 30, height: 30}}onPress={() => {setModalPopup(!showModal)}}>
+                <TouchableOpacity style={{width: 30, height: 30, marginLeft: "auto"}} onPress={() => {setModalPopup(!showModal)}}>
                   <Ionicons name="close" color={colors.rust} size={30} style={styles.closeIcon}/>
                 </TouchableOpacity>
                 <Text style={[styles.header, {marginTop: 35}]}>Sort Friends</Text>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY NAME (ALPHABETICAL)</Text>
-                  {/* selecting filters and icon switching doesn't work yet */}
-                  { (filter == 'name') ? <Ionicons name="radio-button-on" color={colors.rust} size={24}/> :
-                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>}
-                  {console.log(filter == 'name')}
+                  <TouchableOpacity onPress={() => changeFilter('NAME')}>
+                    <Ionicons name={(filter === 'NAME') ? "radio-button-on" : "radio-button-off"} color={colors.rust} size={24}/>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY DISTANCE</Text>
-                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>
+                  <TouchableOpacity onPress={() => changeFilter('DISTANCE')}>
+                    <Ionicons name={(filter === 'DISTANCE') ? "radio-button-on" : "radio-button-off"} color={colors.rust} size={24}/>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY LAST MET</Text>
-                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>
+                  <TouchableOpacity onPress={() => changeFilter('LAST MET')}>
+                    <Ionicons name={(filter === 'LAST MET') ? "radio-button-on" : "radio-button-off"} color={colors.rust} size={24}/>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY NUMBER OF MEMORIES</Text>
-                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>
+                  <TouchableOpacity onPress={() => changeFilter('MEMS')}>
+                    <Ionicons name={(filter === 'MEMS') ? "radio-button-on" : "radio-button-off"} color={colors.rust} size={24}/>
+                  </TouchableOpacity>
                 </View>
               </SafeAreaView>
             </View>

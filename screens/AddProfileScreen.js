@@ -66,21 +66,21 @@ export default function AddProfileScreen({navigation}) {
             {profilePhoto ? <Image source={{ uri: profilePhoto }} style={styles.profilePhoto} />
              : <Image style={{marginTop: '10%'}} source={require('../assets/Images/add-photo.png')}/> }
           </TouchableOpacity>
-          <Text>{loading ? "Uploading ..." : ""}</Text>
+          <Text style={{marginTop: '5%'}}>{loading ? "Uploading ..." : ""}</Text>
           <TouchableOpacity style={styles.bottomText} onPress={() => navigation.navigate("Location")}>
             {profilePhoto ? <Text style={styles.bottomText}></Text>: <Text style={styles.bottomText}>skip for now</Text>}
           </TouchableOpacity>
           
           <LinearGradient 
               style={styles.nextButton}
-              colors={profilePhoto ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
+              colors={profilePhoto && !loading ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
               start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
               location={[0, 0.8]}>
               <Pressable style={styles.nextButtonFilled} onPress={() => {
                 if (profilePhoto) {
                     saveUrl()
+                    navigation.navigate("Location")
                 }
-                navigation.navigate("Location")
                 }}>
                   <Image source={require('../assets/Images/arrow-right.png')}/>
               </Pressable>
