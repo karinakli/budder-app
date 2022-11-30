@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { StyleSheet, View, Image, Text, TextInput, TouchableOpacity, useWindowDimensions} from 'react-native';
+import { StyleSheet, View, Image, Text, TextInput, TouchableOpacity, useWindowDimensions, Dimensions} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../assets/Themes/colors'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect } from 'react'
 import firebase, { db, auth } from "../firebase"
+
+const windowWidth = Dimensions.get('window').width;
 
 export default function LogInScreen({navigation}) {
     const [username, onChangeUsername] = useState(null)
@@ -41,6 +43,14 @@ export default function LogInScreen({navigation}) {
                 <Image source={require('../assets/Images/arrow-right.png')} style={{width: 20, height: 20, resizeMode: 'contain', position: 'absolute', left: '80%'}}/>
             </TouchableOpacity>
           </View>
+
+          <Text style={[styles.loginText, {fontSize: 16 / fontScale, textAlign: 'center', position: 'absolute', top: '98%', width: windowWidth}]}>
+            Don't have an account?
+            <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+                <Text style={{color: colors.maroon, fontWeight: 'bold', top: 3}}> Sign Up</Text>
+            </TouchableOpacity>
+            
+          </Text>
           
         </View>
       );

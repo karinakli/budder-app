@@ -15,6 +15,8 @@ import HomeScreen from './screens/HomeScreen';
 import AddProfileScreen from './screens/AddProfileScreen';
 import LocationScreen from './screens/LocationScreen';
 import ConfirmationScreen from './screens/ConfirmationScreen'
+import SelectFriendScreen from './screens/SelectFriendScreen';
+import AddFriendScreen from './screens/AddFriendScreen'
 
 const Stack = createStackNavigator();
 
@@ -34,15 +36,18 @@ export default function App() {
 
   return (
       <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
+          
             <Stack.Screen name="Default" component={DefaultScreen} options={{headerShown: false}}/>
-            <Stack.Screen name="Signup" component={SignUpScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Login" component={LogInScreen} options={{headerShown: false}}/>
-            <Stack.Screen name="Interests" component={InterestsScreen} options={{headerShown: false}}/>
-            <Stack.Screen name="AddProfile" component={AddProfileScreen} options={{headerShown: false}}/>
-            <Stack.Screen name="Location" component={LocationScreen} options={{headerShown: false}}/>
-            <Stack.Screen name="Confirmation" component={ConfirmationScreen} options={{headerShown: false}}/>
-            <Stack.Screen name="Home" component={HomeScreen} option={{headerShown: false}}/>
+            <Stack.Screen name="Signup" component={SignUpScreen} options={{headerShown: false, gestureEnabled: false}} />
+            <Stack.Screen name="Interests" component={InterestsScreen} options={{headerShown: false, gestureEnabled: false}}/>
+            <Stack.Screen name="AddProfile" component={AddProfileScreen} options={{headerShown: false, gestureEnabled: false}}/>
+            <Stack.Screen name="Location" component={LocationScreen} options={{headerShown: false, gestureEnabled: false}}/>
+            <Stack.Screen name="Confirmation" component={ConfirmationScreen} options={{headerShown: false, gestureEnabled: false}}/>
+            <Stack.Screen name="Home" component={HomeScreen} option={{headerShown: false, gestureEnabled: false}}/>
+            <Stack.Screen name="AddFriend" component={AddFriendScreen}/>
+            <Stack.Screen name="SelectFriend" component={SelectFriendScreen}/>
           </Stack.Navigator>
       </NavigationContainer>
   )

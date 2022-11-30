@@ -10830,6 +10830,13 @@ react-native-codegen@^0.69.2:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
+react-native-drop-shadow@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.npmjs.org/react-native-drop-shadow/-/react-native-drop-shadow-0.0.6.tgz"
+  integrity sha512-eIFZoU7yhr90xB0/Gfuolt/Eelk0F+ohy3piutuYFA+xJx1xtJ/t9xWaaTPwTGXK+56CTnp8mAX4VPDz464NZg==
+  dependencies:
+    logkitty "^0.7.1"
+
 react-native-gesture-handler@~2.5.0:
   version "2.5.0"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.5.0.tgz"
