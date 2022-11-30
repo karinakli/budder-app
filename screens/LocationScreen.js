@@ -15,12 +15,14 @@ export default function LocationScreen({navigation}) {
     const {fontScale} = useWindowDimensions();
     const styles = makeStyles(fontScale)
     
-    const saveLocation = async (lat, long) => {
+    const saveLocation = async (lat, long, subregion) => {
         const user = auth.currentUser;
         const userRef = doc(db, "users", user.uid);
+        console.log(subregion)
         await updateDoc(userRef, {
             lastLat: lat,
-            lastLong: long
+            lastLong: long,
+            address: subregion
         });
     }
 
@@ -38,10 +40,9 @@ export default function LocationScreen({navigation}) {
         let address = await Location.reverseGeocodeAsync(locationObjForGeocode)
         setLocation(address[0].name);
         setLocationAllowed(true);
-        console.log(location)
         const user = auth.currentUser;
         const userRef = doc(db, "users", user.uid);
-        saveLocation(location.coords.latitude, location.coords.longitude, address);
+        saveLocation(location.coords.latitude, location.coords.longitude, address[0].subregion);
     }
 
     useEffect(() => {
