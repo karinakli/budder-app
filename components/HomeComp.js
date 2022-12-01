@@ -158,13 +158,13 @@ export default function HomeComp({navigation}) {
             visible={showModal}
             onRequestClose={() => {setModalPopup(!showModal)}}
         >
-            <View style={styles.modal}>
+            <View style={styles.modal} >
               
               <SafeAreaView style={styles.modalBackground}>
                 <TouchableOpacity style={{width: 30, height: 30, marginLeft: "auto"}} onPress={() => {setModalPopup(!showModal)}}>
                   <Ionicons name="close" color={colors.rust} size={30} style={styles.closeIcon}/>
                 </TouchableOpacity>
-                <Text style={[styles.header, {marginTop: 35}]}>Sort Friends</Text>
+                <Text style={[styles.header, {marginTop: -10}]}>Sort Friends</Text>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY NAME (ALPHABETICAL)</Text>
                   <TouchableOpacity onPress={() => changeFilter('NAME')}>
