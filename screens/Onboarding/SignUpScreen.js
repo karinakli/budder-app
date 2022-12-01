@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, View, Image, Text, TextInput, TouchableOpacity, useWindowDimensions} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../../assets/Themes/colors'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect } from 'react'
 import firebase, { db, auth } from "../../firebase"
 
@@ -40,6 +41,11 @@ export default function SignUpScreen({navigation}) {
           <View style={styles.progressBar}>
               <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '20%', borderRadius: 5}}/>
           </View>
+          <TouchableOpacity onPress={() => navigation.navigate('Default')}>
+            <Ionicons name="arrow-back" size={30} style={{marginTop: 20}} color={colors.rust}/>
+          </TouchableOpacity>
+          
+          <Text style={[styles.header, {fontSize: 36/fontScale}]}>Create An {'\n'}Account</Text>
           <Text style={styles.header}>FULL NAME</Text>
           
           <LinearGradient 

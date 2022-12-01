@@ -17,6 +17,7 @@ import LocationScreen from './screens/Onboarding/LocationScreen';
 import ConfirmationScreen from './screens/Onboarding/ConfirmationScreen'
 import SelectFriendScreen from './screens/SelectFriendScreen';
 import AddFriendScreen from './screens/AddFriendScreen'
+import CameraScreen from './screens/CameraScreen';
 
 const Stack = createStackNavigator();
 
@@ -48,6 +49,8 @@ export default function App() {
             <Stack.Screen name="Default" component={DefaultScreen} options={{headerShown: false}}/>
             <Stack.Screen name="AddFriend" component={AddFriendScreen}/>
             
+            <Stack.Screen name="SelectFriend" component={SelectFriendScreen}/>
+            <Stack.Screen name="Camera" component={CameraScreen}/>
           </Stack.Navigator>
       </NavigationContainer>
   )

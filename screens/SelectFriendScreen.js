@@ -48,7 +48,7 @@ export default function SelectFriendScreen({navigation}) {
                       <Image source={require('../assets/Images/daniel.png')} style={{width: 30, height: 30, borderRadius: 25, marginHorizontal: 10}}/>
                       <Text style={styles.paragraph}>{item.name.toUpperCase()}</Text>
                     </View>
-                    {/* TODO: update hardcoded data */}
+                    {/* TODO: update hardcoded data when clicked*/}
                     <TouchableOpacity>
                       {item.selected ? <Image source={require('../assets/Images/check-circle.png')}/>:<Image source={require('../assets/Images/circle.png')}/>}
                     </TouchableOpacity>
@@ -60,7 +60,8 @@ export default function SelectFriendScreen({navigation}) {
                 )}
               />  
               <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 20}}>
-                <TouchableOpacity style={[styles.yellowButton, styles.shadowProp]} onPress={() => navigation.navigate("AddFriend")}>
+                <TouchableOpacity style={[styles.yellowButton, styles.shadowProp]} 
+                  onPress={() => navigation.navigate("AddFriend", {selectedFriends: ['Amanda', 'Catherine']})}>
                   <Text style={styles.buttonText}>BUILD FRIENDSHIP PROFILE</Text>
                 </TouchableOpacity>
               </View>
