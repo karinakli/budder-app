@@ -30,7 +30,7 @@ export default function AddProfileScreen({navigation}) {
     }
 
     async function uploadImageAsync(uri) {
-        const response = await fetch(uri);
+        const response = await fetch(uri)
         const blob = await response.blob();
         const user = auth.currentUser;
         const storage = getStorage();

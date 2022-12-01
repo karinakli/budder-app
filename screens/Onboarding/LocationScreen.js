@@ -18,7 +18,6 @@ export default function LocationScreen({navigation}) {
     const saveLocation = async (lat, long, subregion) => {
         const user = auth.currentUser;
         const userRef = doc(db, "users", user.uid);
-        console.log(subregion)
         await updateDoc(userRef, {
             lastLat: lat,
             lastLong: long,

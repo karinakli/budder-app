@@ -6,7 +6,7 @@ import {colors} from '../assets/Themes/colors'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import AddFriendButton from './AddFriendButton';
 
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, getDocs, query } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import distanceBetweenCoords from '../util';
 
@@ -18,12 +18,14 @@ export default function HomeComp({navigation}) {
   const filters = ['NAME', 'DISTANCE', 'LAST MET', 'MEMS']
   const [filter, setFilter] = useState('NAME');
   const [showModal, setModalPopup] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   let latLong = [];
 
   const {fontScale} = useWindowDimensions();
   const styles = makeStyles(fontScale)
 
   const [friends, setFriends] = useState(null)
+  const [friendsCopy, setFriendsCopy] = useState(null)
 
   useEffect(() => { loadProfilesFromFirebase() }, [])
 
@@ -31,17 +33,37 @@ export default function HomeComp({navigation}) {
     if (friends) {
       sortFriends()
     }
-  }, [filter, friends])
+    setModalPopup(false)
+  }, [filter])
+
+  useEffect(() => {
+    filterFriends()
+    }, [searchQuery])
+
 
   const sortFriends = () => {
     if (filter === 'NAME') {
       setFriends(friends.sort((a, b) => (a.name > b.name) ? 1 : -1))
+      setFriendsCopy(friends)
     } if (filter === 'DISTANCE') {
       setFriends(friends.sort((a, b) => (a.distance > b.distance) ? 1 : -1))
+      setFriendsCopy(friends)
     } if (filter === 'LAST MET') {
       setFriends(friends.sort((a, b) => (Math.random() > 0.5) ? 1 : -1))
+      setFriendsCopy(friends)
     } if (filter === 'MEMS') {
       setFriends(friends.sort((a, b) => (a.numMems > b.numMems) ? 1 : -1))
+      setFriendsCopy(friends)
+    }
+  }
+
+  const filterFriends = () => {
+    if (friends) {
+      if (searchQuery === '') {
+        setFriends(friendsCopy)
+      } else {
+        setFriends(friends.filter((friend) => friend.name.toLowerCase().includes(searchQuery.toLowerCase())))
+      }
     }
   }
 
@@ -62,6 +84,7 @@ export default function HomeComp({navigation}) {
     transformServerResponseObjects(responseObjects)
       .then(newFriends =>{
         setFriends(newFriends)
+        setFriendsCopy(newFriends)
       })
       .catch(err => console.log(err))
   }
@@ -127,7 +150,6 @@ export default function HomeComp({navigation}) {
 
   const changeFilter = (newFilter) => {
     setFilter(newFilter)
-    setModalPopup(!showModal)
   }
   
   return (
@@ -136,7 +158,7 @@ export default function HomeComp({navigation}) {
       <View style={styles.search}>
         <Text style={styles.header}>Recommendations...</Text>
         <View style={styles.searchWrapper}>
-          < TextInput style={styles.searchBar} placeholder="Search..."/>
+          < TextInput style={styles.searchBar} value={searchQuery} placeholder="Search..." onChangeText={(text) => setSearchQuery(text)}/>
         </View>
         <TouchableOpacity style={styles.filterButton} onPress={() => {setModalPopup(true)}}>
             <Text style={styles.filterText}>{filter}</Text>
