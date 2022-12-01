@@ -7,7 +7,7 @@ import { db, auth } from "../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function SelectFriendScreen({navigation}) {
-    const tempData = [
+    const DATA = [
         {title: 'A', data: ['Amanda', 'Andrew', 'Alex']}, {title: 'B', data: ['Brandon', 'Bianca']}, {title: 'C', data: ['Carissa', 'Caitlyn', 'Carl']},
         {title: 'D', data: ['Dylan', 'Derek', 'Diana']}, {title: 'E', data: ['Ethan', 'Evan', 'Eli']}, {title: 'F', data: ['Fiona', 'Felix', 'Fernando']},
         {title: 'G', data: ['Gavin', 'Graham', 'Gina']}, {title: 'H', data: ['Hannah', 'Harrison', 'Haley']}, {title: 'I', data: ['Isabella', 'Isaac', 'Ian']},
@@ -34,7 +34,7 @@ export default function SelectFriendScreen({navigation}) {
                 </View>
             </View>
             <SectionList 
-                sections={tempData}
+                sections={DATA}
                 keyExtractor={(item, index) => item + index}
                 renderItem={({ item }) => <ContactItem name={item} />}
                 renderSectionHeader={({ section: { title } }) => (

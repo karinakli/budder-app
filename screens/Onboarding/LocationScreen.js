@@ -57,7 +57,7 @@ export default function LocationScreen({navigation}) {
               <View style={{...StyleSheet.absoluteFill, backgroundColor: colors.budder, width: '80%', borderRadius: 5}}/>
           </View>
           <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '50%'}}>
-            <Image source={require('../assets/Images/location.png')}/>
+            <Image source={require('../../assets/Images/location.png')}/>
             <Text style={styles.header}>TURN ON LOCATION</Text>
             <Text style={styles.paragraph}>Get more precise friendship recommendations without the unnecessary effort.</Text>
             <Text style={styles.paragraph}>{location}</Text>

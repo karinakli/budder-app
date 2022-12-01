@@ -34,7 +34,7 @@ export default function LogInScreen({navigation}) {
         <View style={styles.container}>
             <View style={{flexDirection: 'row'}}>
                 <Text style={styles.loginHeader}>Login</Text>
-                <Image style={styles.logo} source={require('../assets/Images/budderfly.png')}/>      
+                <Image style={styles.logo} source={require('../../assets/Images/budderfly.png')}/>      
             </View>
             <Text style={styles.loginText}>Please sign in to continue.</Text>
           <Text style={styles.header}>EMAIL ADDRESS</Text>
@@ -58,7 +58,7 @@ export default function LogInScreen({navigation}) {
                     handleSignUp()
                 }}}>
                 <Text style={{fontFamily: 'Inter-Regular', fontSize: 20 / fontScale, color: colors.rust}}>Log in</Text>
-                <Image source={require('../assets/Images/arrow-right.png')} style={{width: 20, height: 20, resizeMode: 'contain', position: 'absolute', left: '80%'}}/>
+                <Image source={require('../../assets/Images/arrow-right.png')} style={{width: 20, height: 20, resizeMode: 'contain', position: 'absolute', left: '80%'}}/>
             </TouchableOpacity>
           </View>
 

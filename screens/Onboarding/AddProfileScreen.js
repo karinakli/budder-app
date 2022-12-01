@@ -64,7 +64,7 @@ export default function AddProfileScreen({navigation}) {
           <Text style={styles.header}>ADD A PROFILE PHOTO</Text>
           <TouchableOpacity onPress={pickImage}>
             {profilePhoto ? <Image source={{ uri: profilePhoto }} style={styles.profilePhoto} />
-             : <Image style={{marginTop: '10%'}} source={require('../assets/Images/add-photo.png')}/> }
+             : <Image style={{marginTop: '10%'}} source={require('../../assets/Images/add-photo.png')}/> }
           </TouchableOpacity>
           <Text style={{marginTop: '5%'}}>{loading ? "Uploading ..." : ""}</Text>
           <TouchableOpacity style={styles.bottomText} onPress={() => navigation.navigate("Location")}>
@@ -82,7 +82,7 @@ export default function AddProfileScreen({navigation}) {
                     navigation.navigate("Location")
                 }
                 }}>
-                  <Image source={require('../assets/Images/arrow-right.png')}/>
+                  <Image source={require('../../assets/Images/arrow-right.png')}/>
               </Pressable>
           </LinearGradient>
 

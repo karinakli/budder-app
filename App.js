@@ -7,14 +7,14 @@ import { useState, useEffect, useCallback } from 'react';
 import {colors} from './assets/Themes/colors'
 import {useFonts} from 'expo-font'
 
-import LogInScreen from './screens/LogInScreen';
-import SignUpScreen from './screens/SignUpScreen';
-import DefaultScreen from './screens/DefaultScreen';
-import InterestsScreen from './screens/InterestsScreen';
+import LogInScreen from './screens/Onboarding/LogInScreen';
+import SignUpScreen from './screens/Onboarding/SignUpScreen';
+import DefaultScreen from './screens/Onboarding/DefaultScreen';
+import InterestsScreen from './screens/Onboarding/InterestsScreen';
 import HomeScreen from './screens/HomeScreen';
 import AddProfileScreen from './screens/Onboarding/AddProfileScreen';
-import LocationScreen from './screens/LocationScreen';
-import ConfirmationScreen from './screens/ConfirmationScreen'
+import LocationScreen from './screens/Onboarding/LocationScreen';
+import ConfirmationScreen from './screens/Onboarding/ConfirmationScreen'
 import SelectFriendScreen from './screens/SelectFriendScreen';
 import AddFriendScreen from './screens/AddFriendScreen'
 

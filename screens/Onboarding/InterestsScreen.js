@@ -89,7 +89,7 @@ export default function InterestsScreen({navigation}) {
                 colors={(selectedInterests && selectedMusic && selectedFoods) ? [colors.budder, colors.maroon] : ["#606060", "#606060"]}
                 start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
                 location={[0, 0.8]}>
-                <Image source={require('../assets/Images/arrow-right.png')}/>
+                <Image source={require('../../assets/Images/arrow-right.png')}/>
             </LinearGradient>
         </TouchableOpacity>
       </View>
