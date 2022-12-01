@@ -48,7 +48,6 @@ export default function App() {
             <Stack.Screen name="SelectFriend" component={SelectFriendScreen}/>
             <Stack.Screen name="Default" component={DefaultScreen} options={{headerShown: false}}/>
             <Stack.Screen name="AddFriend" component={AddFriendScreen}/>
-            
             <Stack.Screen name="SelectFriend" component={SelectFriendScreen}/>
             <Stack.Screen name="Camera" component={CameraScreen}/>
           </Stack.Navigator>
