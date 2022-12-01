@@ -5,29 +5,22 @@ import {colors} from '../assets/Themes/colors'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import ItineraryScreen from '../screens/ItineraryScreen'
-import ProfileScreen from '../screens/ProfileScreen'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import AddFriendButton from './AddFriendButton';
 
 import { collection, query, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
+import distanceBetweenCoords from '../util';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 
 export default function HomeComp({navigation}) {
-  const filters = ['name', 'distance', 'lastMet', 'numMems']
-  const [filter, setFilter] = useState(filters[0]);
-  // TODO: Remove
-  let starterfriends = [
-    { default: true, name: 'Karina', distance: 'Irvine, CA', lastMet: '2021-10-23', numMems: 44, interests: ['baking', 'painting', 'hiking'], image: require('../assets/Images/karina.png')},
-    { default: true, name: 'Andrea', distance: 'Cupertino, CA', lastMet: '2022-10-28', numMems: 172, interests: ['dancing', 'traveling', 'gaming'], image: require('../assets/Images/andrea.png')},
-    { default: true, name: 'Jaime', distance: 'Stanford, CA', lastMet: '2022-11-27', numMems: 10, interests: ['hiking', 'journaling', 'soccer'], image: require('../assets/Images/jaime.png')},
-    { default: true, name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')},
-  ]
+  const filters = ['NAME', 'DISTANCE', 'LAST MET', 'MEMS']
+  const [filter, setFilter] = useState('NAME');
   const [showModal, setModalPopup] = useState(false);
+  let latLong = [];
 
   const {fontScale} = useWindowDimensions();
   const styles = makeStyles(fontScale)
@@ -36,17 +29,42 @@ export default function HomeComp({navigation}) {
 
   useEffect(() => { loadProfilesFromFirebase() }, [])
 
+  useEffect(() => {
+    if (friends) {
+      sortFriends()
+    }
+  }, [filter, friends])
+
+  const sortFriends = () => {
+    if (filter === 'NAME') {
+      setFriends(friends.sort((a, b) => (a.name > b.name) ? 1 : -1))
+    } if (filter === 'DISTANCE') {
+      setFriends(friends.sort((a, b) => (a.distance > b.distance) ? 1 : -1))
+    } if (filter === 'LAST MET') {
+      setFriends(friends.sort((a, b) => (Math.random() > 0.5) ? 1 : -1))
+    } if (filter === 'MEMS') {
+      setFriends(friends.sort((a, b) => (a.numMems > b.numMems) ? 1 : -1))
+    }
+  }
+
+
   async function loadProfilesFromFirebase() {
     let responseObjects = []
     const usersRef = collection(db, "users");
     const q = query(usersRef);
-    const querySnapshot = await getDocs(q, );
+    const querySnapshot = await getDocs(q,);
     querySnapshot.forEach((doc) => {
       let data = doc.data()
-      responseObjects = [...responseObjects, data]
+      if (doc.id !== auth.currentUser.uid) {
+        responseObjects = [...responseObjects, data]
+      } else {
+        latLong = [data.lastLat, data.lastLong]
+      }
     })
-    let newFriendsArrayPromise = await transformServerResponseObjects(responseObjects)
-      .then(newFriends => setFriends(newFriends))
+    transformServerResponseObjects(responseObjects)
+      .then(newFriends =>{
+        setFriends(newFriends)
+      })
       .catch(err => console.log(err))
   }
 
@@ -54,14 +72,20 @@ export default function HomeComp({navigation}) {
     let newFriendObjects = []
     for (let i = 0; i < responseObjects.length; i++) {
       let friendResponse = responseObjects[i]
-      let newFriendObj = { name: 'Daniel', distance: 'Miami, FL', lastMet: '2022-11-28', numMems: 4400, interests: ['hiking', 'traveling', 'gaming'], image: require('../assets/Images/daniel.png')}
+      let randomNumMems = Math.floor(Math.random() * 20)
+      let newFriendObj = { name: 'N/A', distance: '', lastMet: '2022-11-28', numMems: randomNumMems, interests: [], image: require('../assets/Images/daniel.png')}
       newFriendObj.name = friendResponse.name
       newFriendObj.image = friendResponse.profilePhoto
-      newFriendObj.distance = friendResponse.address
+      newFriendObj.address = friendResponse.address
       newFriendObj.interests = friendResponse.interests
+      let distance = distanceBetweenCoords(latLong[0], friendResponse.lastLat, latLong[1], friendResponse.lastLong)
+      newFriendObj.distance = distance
+      newFriendObj.lat = friendResponse.lastLat
+      newFriendObj.long = friendResponse.lastLong
       newFriendObjects = [...newFriendObjects, newFriendObj]
     }
-    return [...newFriendObjects, ...starterfriends]
+
+    return newFriendObjects
   }
 
   
@@ -92,27 +116,24 @@ export default function HomeComp({navigation}) {
             <View style={{flexDirection: 'column', flex: 1}}>
               <Text style={styles.friendHeader}>{item.name.toUpperCase()}</Text>
               <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={styles.paragraph}>{item.distance}</Text>
-                <Text style={styles.boldParagraph}>{item.numMems} mems</Text>
+                <Text style={styles.paragraph}>{item.address}</Text>
+                <Text style={styles.boldParagraph}>{ (filter !== "DISTANCE") ? item.numMems + " mems": item.distance + " miles"}</Text>
               </View>
               <Text style={[styles.paragraph, {marginTop: 20}]}>{getInterests()}</Text>
             </View>
           </View>       
         </LinearGradient>
       </TouchableOpacity>
-      
-      
     )
+  }
+
+  const changeFilter = (newFilter) => {
+    setFilter(newFilter)
+    setModalPopup(!showModal)
   }
   
   return (
     <SafeAreaView style={styles.container}>
-      {/* <TouchableOpacity>
-        <View style={[styles.addFriend, styles.shadowProp]}>
-          <Image source={require('../assets/Images/add-friend.png')} style={{width: 40, height: 40, resizeMode: 'contain', marginLeft: 5}}/>
-        </View>  
-      </TouchableOpacity> */}
-        
       <AddFriendButton navigation={navigation}/>
       <View style={styles.search}>
         <Text style={styles.header}>Recommendations...</Text>
@@ -120,7 +141,7 @@ export default function HomeComp({navigation}) {
           < TextInput style={styles.searchBar} placeholder="Search..."/>
         </View>
         <TouchableOpacity style={styles.filterButton} onPress={() => {setModalPopup(true)}}>
-            <Text style={styles.filterText}>{filter.toUpperCase()}</Text>
+            <Text style={styles.filterText}>{filter}</Text>
             {showModal ? <Ionicons name="arrow-up" color={colors.rust}/>: <Ionicons name="arrow-down" color={colors.rust}/>}
         </TouchableOpacity>
         
@@ -142,28 +163,33 @@ export default function HomeComp({navigation}) {
             <View style={styles.modal}>
               
               <SafeAreaView style={styles.modalBackground}>
-                <TouchableOpacity style={[styles.closeIcon, {width: 30, height: 30}]} onPress={() => {setModalPopup(!showModal)}}>
-                  <Ionicons name="close" color={colors.rust} size={30}/>
+                <TouchableOpacity style={{width: 30, height: 30, marginLeft: "auto"}} onPress={() => {setModalPopup(!showModal)}}>
+                  <Ionicons name="close" color={colors.rust} size={30} style={styles.closeIcon}/>
                 </TouchableOpacity>
                 <Text style={[styles.header, {marginTop: 35}]}>Sort Friends</Text>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY NAME (ALPHABETICAL)</Text>
-                  {/* selecting filters and icon switching doesn't work yet */}
-                  { (filter == 'name') ? <Ionicons name="radio-button-on" color={colors.rust} size={24}/> :
-                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>}
-                  {console.log(filter == 'name')}
+                  <TouchableOpacity onPress={() => changeFilter('NAME')}>
+                    <Ionicons name={(filter === 'NAME') ? "radio-button-on" : "radio-button-off"} color={colors.rust} size={24}/>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY DISTANCE</Text>
-                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>
+                  <TouchableOpacity onPress={() => changeFilter('DISTANCE')}>
+                    <Ionicons name={(filter === 'DISTANCE') ? "radio-button-on" : "radio-button-off"} color={colors.rust} size={24}/>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY LAST MET</Text>
-                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>
+                  <TouchableOpacity onPress={() => changeFilter('LAST MET')}>
+                    <Ionicons name={(filter === 'LAST MET') ? "radio-button-on" : "radio-button-off"} color={colors.rust} size={24}/>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY NUMBER OF MEMORIES</Text>
-                  <Ionicons name="radio-button-off" color={colors.rust} size={24}/>
+                  <TouchableOpacity onPress={() => changeFilter('MEMS')}>
+                    <Ionicons name={(filter === 'MEMS') ? "radio-button-on" : "radio-button-off"} color={colors.rust} size={24}/>
+                  </TouchableOpacity>
                 </View>
               </SafeAreaView>
             </View>
@@ -295,25 +321,7 @@ export default function HomeComp({navigation}) {
     closeIcon: {
       position: 'absolute',
       top: windowWidth * 0.05,
-      left: windowWidth * 0.90,
-    },
-    addFriend: {
-      width: 65,
-      height: 65,
-      borderRadius: '50%',
-      backgroundColor: colors.budder,
-      position: 'absolute',
-      top: '95%',
-      left: '80%',
-      zIndex: 100,
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-    shadowProp: {
-      shadowColor: colors.darkGray,
-      shadowOffset: {width: 3, height: 4},
-      shadowOpacity: 0.4,
-      shadowRadius: 3,
-    },
+      right: windowWidth * 0.05,
+    }
   });
   

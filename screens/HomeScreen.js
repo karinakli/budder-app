@@ -12,12 +12,10 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import HomeComp from '../components/HomeComp';
 
 import { collection, query, getDocs } from "firebase/firestore";
-import { auth, db } from "../firebase";
-import distanceBetweenCoords from '../util';
+import { db } from "../firebase";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
