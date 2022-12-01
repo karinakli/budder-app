@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity, useWindowDimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors } from '../assets/Themes/colors'
-import { db, auth } from "../firebase"
+import { colors } from '../../assets/Themes/colors'
+import { db, auth } from "../../firebase"
 import { doc, updateDoc } from "firebase/firestore";
 
 import * as Location from 'expo-location'

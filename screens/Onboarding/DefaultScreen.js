@@ -1,7 +1,7 @@
 import {LinearGradient} from 'expo-linear-gradient';
 import { useWindowDimensions } from 'react-native';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import {colors} from '../assets/Themes/colors'
+import {colors} from '../../assets/Themes/colors'
 
 export default function DefaultScreen({navigation}) {
   const {fontScale} = useWindowDimensions();

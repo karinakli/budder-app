@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { StyleSheet, View, Image, Text, TextInput, TouchableOpacity, useWindowDimensions} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
-import {colors} from '../assets/Themes/colors'
+import {colors} from '../../assets/Themes/colors'
 import { useEffect } from 'react'
-import firebase, { db, auth } from "../firebase"
+import firebase, { db, auth } from "../../firebase"
 
 export default function SignUpScreen({navigation}) {
     const [username, onChangeUsername] = useState(null)

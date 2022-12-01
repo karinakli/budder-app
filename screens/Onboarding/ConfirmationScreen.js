@@ -1,5 +1,5 @@
 import { StyleSheet, View, Image, Text, TouchableOpacity, useWindowDimensions} from 'react-native';
-import {colors} from '../assets/Themes/colors'
+import {colors} from '../../assets/Themes/colors'
 
 export default function ConfirmationScreen({navigation}) {
 

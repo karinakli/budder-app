@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { StyleSheet, View, Image, Text, ScrollView, TouchableOpacity, useWindowDimensions, Pressable} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
-import {colors} from '../assets/Themes/colors';
-import { db, auth } from "../firebase"
+import {colors} from '../../assets/Themes/colors';
+import { db, auth } from "../../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 const ListItem = (props) => {

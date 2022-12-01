@@ -1,9 +1,7 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {LinearGradient} from 'expo-linear-gradient';
 import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity, FlatList, Dimensions, Image, useWindowDimensions, Modal } from 'react-native';
 import {colors} from '../assets/Themes/colors'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 import AddFriendButton from './AddFriendButton';

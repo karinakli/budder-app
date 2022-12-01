@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button, Alert, useWindowDimensions} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
-import {colors} from '../assets/Themes/colors'
+import {colors} from '../../assets/Themes/colors'
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
-import { db, auth } from "../firebase"
+import { db, auth } from "../../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function AddProfileScreen({navigation}) {

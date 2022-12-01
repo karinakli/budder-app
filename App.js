@@ -12,7 +12,7 @@ import SignUpScreen from './screens/SignUpScreen';
 import DefaultScreen from './screens/DefaultScreen';
 import InterestsScreen from './screens/InterestsScreen';
 import HomeScreen from './screens/HomeScreen';
-import AddProfileScreen from './screens/AddProfileScreen';
+import AddProfileScreen from './screens/Onboarding/AddProfileScreen';
 import LocationScreen from './screens/LocationScreen';
 import ConfirmationScreen from './screens/ConfirmationScreen'
 import SelectFriendScreen from './screens/SelectFriendScreen';
