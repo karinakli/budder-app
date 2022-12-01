@@ -37,7 +37,7 @@ export default function App() {
   return (
       <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
-          
+            <Stack.Screen name="SelectFriend" component={SelectFriendScreen}/>
             <Stack.Screen name="Default" component={DefaultScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Login" component={LogInScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Signup" component={SignUpScreen} options={{headerShown: false, gestureEnabled: false}} />
@@ -47,7 +47,7 @@ export default function App() {
             <Stack.Screen name="Confirmation" component={ConfirmationScreen} options={{headerShown: false, gestureEnabled: false}}/>
             <Stack.Screen name="Home" component={HomeScreen} option={{headerShown: false, gestureEnabled: false}}/>
             <Stack.Screen name="AddFriend" component={AddFriendScreen}/>
-            <Stack.Screen name="SelectFriend" component={SelectFriendScreen}/>
+            
           </Stack.Navigator>
       </NavigationContainer>
   )
