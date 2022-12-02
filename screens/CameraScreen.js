@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button, Alert, useWindowDimensions, SafeAreaView} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons'
 import {colors} from '../assets/Themes/colors'
+import { Camera, CameraType } from 'expo-camera';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
 import { db, auth } from "../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
@@ -12,30 +13,47 @@ export default function CameraScreen({navigation, route}) {
     const selectedFriends = route.params.selectedFriends;
     const [flash, setFlash] = useState(false);
     const [cameraFace, setCameraFace] = useState(false); // false = front, true = back
-
+    const [type, setType] = useState(CameraType.back);
+    const [permission, requestPermission] = Camera.useCameraPermissions();
     const {fontScale} = useWindowDimensions();
     const styles = makeStyles(fontScale)
 
+    if (!permission) {
+        // Camera permissions are still loading
+        return <View />;
+      }
+    
+      if (!permission.granted) {
+        // Camera permissions are not granted yet
+        return (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
+            <Button onPress={requestPermission} title="grant permission" />
+          </View>
+        );
+      }
+
     const flipCamera = () => {
+        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
         setCameraFace(!cameraFace);
     }
 
     const takePicture = () => {
-        navigation.navigate('AddFriend', {selectedFriends: selectedFriends});
+        navigation.pop();
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={{width: 40, height: 40, marginLeft: 10}} onPress={() => navigation.navigate('AddFriendScreen', {selectedFriends: selectedFriends})}>
+            <TouchableOpacity style={{width: 40, height: 40, marginLeft: 10}} onPress={() => navigation.pop()}>
                 <Ionicons name="close" color={colors.rust} size={40} style={styles.closeIcon}/>
             </TouchableOpacity>
             
             <View style={{alignItems: 'center'}}>
                 <Text style={styles.header}>MAKE A MEMORY</Text>
                 <Text style={[styles.paragraph]}>Snap a photo to add to your friendship memory reel!</Text>
-                <View style={styles.camera}>
-                    <Image style={{width: '100%', height: '100%', borderRadius: 20}}source={require('../assets/Images/camera-placeholder.png')}/>
-                </View>
+                <Camera style={styles.camera} type={type}>
+                    {/* <Image style={{width: '100%', height: '100%', borderRadius: 20}}source={require('../assets/Images/camera-placeholder.png')}/> */}
+                </Camera>
                 <View style={{flexDirection: 'row', marginTop: 20, justifyContent: 'space-evenly'}}>
                     {flash ? (
                         <TouchableOpacity onPress={() => setFlash(false)}>
