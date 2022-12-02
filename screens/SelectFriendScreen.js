@@ -10,18 +10,6 @@ export default function SelectFriendScreen({navigation}) {
     const [data, setData] = useState([]);
     const [unfilteredData, setunfilteredData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    // const FAKE_DATA = [
-    //     {title: 'A', data: [{name: 'Amanda', selected: true}, {name: 'Andrew', selected: false}, {name: 'Alex', selected: false}]}, 
-    //     {title: 'B', data: [{name: 'Brandon', selected: false}, {name: 'Bianca', selected: false}]}, 
-    //     {title: 'C', data: [{name: 'Cameron', selected: false}, {name: 'Catherine', selected: true}, {name: 'Caleb', selected: false}]},
-    //     {title: 'D', data: [{name: 'Dylan', selected: false}]},
-    //     {title: 'E', data: [{name: 'Ethan', selected: false}, {name: 'Ella', selected: false}, {name: 'Eli', selected: false}]},
-    //     {title: 'F', data: [{name: 'Felix', selected: false}, {name: 'Faith', selected: false}]},
-    //     {title: 'G', data: [{name: 'Gabriel', selected: false}, {name: 'Grace', selected: false}, {name: 'Gavin', selected: false}]},
-    //     {title: 'H', data: [{name: 'Henry', selected: false}]},
-    //     {title: 'I', data: [{name: 'Isaac', selected: false}, {name: 'Isabella', selected: false}, {name: 'Ian', selected: false}]},
-    //     {title: 'J', data: [{name: 'Jacob', selected: false}, {name: 'Julia', selected: false}, {name: 'Jackson', selected: false}]},
-    // ]
 
     useEffect(() => {loadProfilesFromFirebase()}, []);
 
@@ -69,12 +57,17 @@ export default function SelectFriendScreen({navigation}) {
     );
 
     const onSelectPerson = (item) => {
-      let index = data.map(section => section.title.toLowerCase()).indexOf(item.name[0].toLowerCase())
-      let index2 = data[index].data.map(person => person.name).indexOf(item.name)
       let newData = [...data]
-      newData[index].data[index2].selected = !newData[index].data[index2].selected
+      if (data.length > 1) {
+        let index = data.map(section => section.title.toLowerCase()).indexOf(item.name[0].toLowerCase())
+        let index2 = data[index].data.map(person => person.name).indexOf(item.name)
+        newData[index].data[index2].selected = !newData[index].data[index2].selected
+      } else {
+        let index = data[0].data.map(person => person.name).indexOf(item.name)
+        newData[0].data[index].selected = !newData[0].data[index].selected
+      }
       setData(newData)
-      setunfilteredData(newData)
+      setData(newData)
     }
 
     useEffect(() => {search()}, [searchQuery]);
@@ -99,6 +92,21 @@ export default function SelectFriendScreen({navigation}) {
           }
         }
       }
+    }
+
+    const getSelectedFriends = () => {
+      let selectedFriends = []
+      for (let i = 0; i < data.length; i++) {
+        let section = data[i]
+        for (let j = 0; j < section.data.length; j++) {
+          let person = section.data[j]
+          if (person.selected) {
+            selectedFriends.push(person.name)
+          }
+        }
+      }
+      console.log(selectedFriends)
+      return selectedFriends
     }
   
     return (
@@ -134,7 +142,7 @@ export default function SelectFriendScreen({navigation}) {
               />  
               <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 20}}>
                 <TouchableOpacity style={[styles.yellowButton, styles.shadowProp]} 
-                  onPress={() => navigation.navigate("AddFriend", {selectedFriends: ['Amanda', 'Catherine']})}>
+                  onPress={() => navigation.navigate("AddFriend", {selectedFriends: getSelectedFriends()})}>
                   <Text style={styles.buttonText}>BUILD FRIENDSHIP PROFILE</Text>
                 </TouchableOpacity>
               </View>
