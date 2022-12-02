@@ -1,24 +1,65 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, SectionList, TextInput, useWindowDimensions, SafeAreaView} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../assets/Themes/colors'
-import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
+import { collection, getDocs, query } from "firebase/firestore";
 import { db, auth } from "../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function SelectFriendScreen({navigation}) {
-    const DATA = [
-        {title: 'A', data: [{name: 'Amanda', selected: true}, {name: 'Andrew', selected: false}, {name: 'Alex', selected: false}]}, 
-        {title: 'B', data: [{name: 'Brandon', selected: false}, {name: 'Bianca', selected: false}]}, 
-        {title: 'C', data: [{name: 'Cameron', selected: false}, {name: 'Catherine', selected: true}, {name: 'Caleb', selected: false}]},
-        {title: 'D', data: [{name: 'Dylan', selected: false}]},
-        {title: 'E', data: [{name: 'Ethan', selected: false}, {name: 'Ella', selected: false}, {name: 'Eli', selected: false}]},
-        {title: 'F', data: [{name: 'Felix', selected: false}, {name: 'Faith', selected: false}]},
-        {title: 'G', data: [{name: 'Gabriel', selected: false}, {name: 'Grace', selected: false}, {name: 'Gavin', selected: false}]},
-        {title: 'H', data: [{name: 'Henry', selected: false}]},
-        {title: 'I', data: [{name: 'Isaac', selected: false}, {name: 'Isabella', selected: false}, {name: 'Ian', selected: false}]},
-        {title: 'J', data: [{name: 'Jacob', selected: false}, {name: 'Julia', selected: false}, {name: 'Jackson', selected: false}]},
-    ]
+    const [data, setData] = useState([]);
+    const [unfilteredData, setunfilteredData] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    // const FAKE_DATA = [
+    //     {title: 'A', data: [{name: 'Amanda', selected: true}, {name: 'Andrew', selected: false}, {name: 'Alex', selected: false}]}, 
+    //     {title: 'B', data: [{name: 'Brandon', selected: false}, {name: 'Bianca', selected: false}]}, 
+    //     {title: 'C', data: [{name: 'Cameron', selected: false}, {name: 'Catherine', selected: true}, {name: 'Caleb', selected: false}]},
+    //     {title: 'D', data: [{name: 'Dylan', selected: false}]},
+    //     {title: 'E', data: [{name: 'Ethan', selected: false}, {name: 'Ella', selected: false}, {name: 'Eli', selected: false}]},
+    //     {title: 'F', data: [{name: 'Felix', selected: false}, {name: 'Faith', selected: false}]},
+    //     {title: 'G', data: [{name: 'Gabriel', selected: false}, {name: 'Grace', selected: false}, {name: 'Gavin', selected: false}]},
+    //     {title: 'H', data: [{name: 'Henry', selected: false}]},
+    //     {title: 'I', data: [{name: 'Isaac', selected: false}, {name: 'Isabella', selected: false}, {name: 'Ian', selected: false}]},
+    //     {title: 'J', data: [{name: 'Jacob', selected: false}, {name: 'Julia', selected: false}, {name: 'Jackson', selected: false}]},
+    // ]
+
+    useEffect(() => {loadProfilesFromFirebase()}, []);
+
+    async function loadProfilesFromFirebase() {
+      let responseObjects = []
+      const usersRef = collection(db, "users");
+      const q = query(usersRef);
+      const querySnapshot = await getDocs(q,);
+      querySnapshot.forEach((doc) => {
+        let data = doc.data()
+        if (doc.id !== auth.currentUser.uid) {
+          responseObjects = [...responseObjects, data]
+        }
+      })
+      transformServerResponseObjects(responseObjects)
+        .then(transformedData =>{
+          setData(transformedData)
+          setunfilteredData(transformedData)
+        })
+        .catch(err => console.log(err))
+    }
+  
+    async function transformServerResponseObjects(responseObjects) {
+      let transformedData = []
+      for (let i = 0; i < responseObjects.length; i++) {
+        let object = responseObjects[i]
+        // if the first letter of object.name is a title in DATA, add it to the corresponding section
+        if (data.map(section => section.title).includes(object.name[0].toLowerCase())) {
+          let index = data.map(section => section.title.toLowerCase()).indexOf(object.name[0])
+          transformedData[index].data.push({name: object.name, selected: false, id: object.id, profilePicture: object.profilePhoto})
+        } else {
+          // if the first letter of object.name is not a title in DATA, add it to a new section
+          transformedData.push({title: object.name[0], data: [{name: object.name, selected: false, id: object.id, profilePicture: object.profilePhoto}]})
+        }
+      }
+      // sort alphabetically by title
+      return transformedData.sort((a, b) => a.title.localeCompare(b.title))
+    }
 
     const {fontScale} = useWindowDimensions();
     const styles = makeStyles(fontScale)
@@ -26,13 +67,46 @@ export default function SelectFriendScreen({navigation}) {
     const HeaderItem = ({ title }) => (
       <Text style={styles.title}>{title}</Text>
     );
+
+    const onSelectPerson = (item) => {
+      let index = data.map(section => section.title.toLowerCase()).indexOf(item.name[0].toLowerCase())
+      let index2 = data[index].data.map(person => person.name).indexOf(item.name)
+      let newData = [...data]
+      newData[index].data[index2].selected = !newData[index].data[index2].selected
+      setData(newData)
+      setunfilteredData(newData)
+    }
+
+    useEffect(() => {search()}, [searchQuery]);
+
+    const search = () => {
+      if (unfilteredData) {
+        if (searchQuery === '') {
+          setData(unfilteredData)
+        } else {
+          let newData = []
+          for ( let i = 0; i < unfilteredData.length; i++) {
+            let section = unfilteredData[i]
+            for (let j = 0; j < section.data.length; j++) {
+              let person = section.data[j]
+              if (person.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+                newData.push(person)
+              }
+            }
+          }
+          if (newData.length > 0) {
+            setData([{title: 'Search Results', data: newData}])
+          }
+        }
+      }
+    }
   
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.search}>
                 <Text style={styles.header}>Select Friends To Create Profile</Text>
                 <View style={styles.searchWrapper}>
-                    <TextInput style={styles.searchBar} placeholder="Search..."/>
+                    <TextInput style={styles.searchBar} value={searchQuery} onChangeText={(text) => setSearchQuery(text)} placeholder="Search..."/>
                     <TouchableOpacity onPress={() => navigation.navigate("Home")}>
                         <Text style={styles.cancelText}>Cancel</Text>
                     </TouchableOpacity>
@@ -40,19 +114,18 @@ export default function SelectFriendScreen({navigation}) {
             </View>
             <SafeAreaView style={{marginTop: 20, width: '100%', paddingHorizontal: '7%', height: '85%'}}>
               <SectionList
-                sections={DATA}
+                sections={data}
                 keyExtractor={(item, index) => item + index} /* unique key for each item */
                 renderItem={({ item }) => (
-                  <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10, justifyContent: 'space-between'}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <Image source={require('../assets/Images/daniel.png')} style={{width: 30, height: 30, borderRadius: 25, marginHorizontal: 10}}/>
-                      <Text style={styles.paragraph}>{item.name.toUpperCase()}</Text>
+                  <TouchableOpacity onPress={() => onSelectPerson(item)}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10, justifyContent: 'space-between'}}>
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Image source={{uri: item.profilePicture}} style={{width: 30, height: 30, borderRadius: 25, marginHorizontal: 10}}/>
+                        <Text style={styles.paragraph}>{item.name.toUpperCase()}</Text>
+                      </View>
+                      {item.selected ? <Image source={require('../assets/Images/check-circle.png')}/>:<Image source={require('../assets/Images/circle.png')}/> }
                     </View>
-                    {/* TODO: update hardcoded data when clicked*/}
-                    <TouchableOpacity>
-                      {item.selected ? <Image source={require('../assets/Images/check-circle.png')}/>:<Image source={require('../assets/Images/circle.png')}/>}
-                    </TouchableOpacity>
-                  </View>
+                  </TouchableOpacity>
                   
                 )}
                 renderSectionHeader={({ section: { title } }) => (
