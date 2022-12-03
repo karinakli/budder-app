@@ -28,7 +28,7 @@ export default function AddFriendScreen({navigation, route}) {
                 header += ", ";
             }
         }
-        return header + '\'S FRIENDSHIP'
+        return header + 'S FRIENDSHIP'
     }
 
     const ListItem = (props) => {
