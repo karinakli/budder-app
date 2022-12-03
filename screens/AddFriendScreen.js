@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity, Pressable, Button, Alert, useWindowDimensions, SafeAreaView} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '../assets/Themes/colors'
+import {memories} from '../assets/memoryData';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "firebase/storage";
 import { db, auth } from "../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
@@ -11,6 +11,7 @@ import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 export default function AddFriendScreen({navigation, route}) {
     const selectedFriends = route.params.selectedFriends;
     const [sharedInterests, setSharedInterests] = useState(["Cooking", "Traveling", "Art", "Gaming"]);
+    const [hasMemories, setHasMemories] = useState(true);
     const mutualPics = [require('../assets/Images/pfp1.png'), require('../assets/Images/pfp2.png'), require('../assets/Images/pfp3.png'), 
         require('../assets/Images/pfp4.png'), require('../assets/Images/pfp5.png'), require('../assets/Images/pfp6.png')]
 
@@ -18,17 +19,7 @@ export default function AddFriendScreen({navigation, route}) {
     const styles = makeStyles(fontScale)
 
     function getHeader() {
-        let header = "";
-        for (let i = 0; i < selectedFriends.length; i++) {
-            if (i == selectedFriends.length - 1) {
-                header += ' & '
-            }
-            header += selectedFriends[i].toUpperCase();
-            if (i < selectedFriends.length - 2) {
-                header += ", ";
-            }
-        }
-        return header + 'S FRIENDSHIP'
+        return selectedFriends[0].toUpperCase() + " & " + selectedFriends[1].toUpperCase() + "S FRIENDSHIP";
     }
 
     const ListItem = (props) => {
@@ -60,6 +51,15 @@ export default function AddFriendScreen({navigation, route}) {
         <Image style={styles.mutualPic} source={item}/>
     );
 
+    const getRandomMemories = () => {
+        let randomMemories = [];
+        for (let i = 0; i < 3; i++) {
+            randomMemories.push(memories[Math.floor(Math.random() * memories.length)]);
+        }
+        console.log(randomMemories)
+        return randomMemories;
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity style={{width: 40, height: 40, marginLeft: 10}} onPress={() => navigation.navigate('Home')}>
@@ -76,10 +76,10 @@ export default function AddFriendScreen({navigation, route}) {
             
                 <LinearGradient 
                 colors={[colors.budder, colors.maroon]}
-                style={styles.reelContainer}
+                style={[styles.reelContainer, {minHeight: hasMemories ? 180: 150}]}
                 start={{x:0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}>
                     <View style={styles.reelFillContainer}>
-                        <Image source={require('../assets/Images/grey-camera.png')} style={styles.backgroundCamera}/>
+                        
                         <View style={{flexDirection: 'row'}}>
                             <Image source={require('../assets/Images/reel.png')}/>
                             <Text style={[styles.paragraph, {marginLeft: 10}]}>Your Reel</Text>
@@ -87,7 +87,25 @@ export default function AddFriendScreen({navigation, route}) {
                                 <Image source={require('../assets/Images/plus.png')} style={{width: 20, height: 20}}/>
                             </TouchableOpacity>
                         </View>
-                        <Text style={[styles.paragraph, {textAlign: 'center', marginTop: 20}]}>Nothing to see here.{'\n'}Snap a photo to get started!</Text>
+                        { hasMemories ? (
+                            <>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
+                                    {getRandomMemories().map((image) => (
+                                        <Image source={image.url} style={styles.reelImage}/>
+                                    ))}
+                                </View>
+                                <TouchableOpacity onPress={() => navigation.navigate('Reel', {selectedFriends: selectedFriends})}>
+                                    <Text style={styles.paragraph2}>See all</Text>
+                                </TouchableOpacity>
+                                
+                            </>
+                        ) : (
+                            <>
+                                <Image source={require('../assets/Images/grey-camera.png')} style={styles.backgroundCamera}/>
+                                <Text style={[styles.paragraph, {textAlign: 'center', marginTop: 20}]}>Nothing to see here.{'\n'}Snap a photo to get started!</Text>
+                            </>
+                        )}
+                        
                     </View>
                 </LinearGradient>
                 <LinearGradient 
@@ -160,6 +178,13 @@ export default function AddFriendScreen({navigation, route}) {
         fontFamily: 'Inter-Regular',
         color: colors.rust,
     },
+    paragraph2: {
+        fontSize: 14 / fontScale,
+        fontFamily: 'Inter-Regular',
+        color: colors.rust,
+        textDecorationLine: 'underline',
+        marginTop: 8
+    },
     reelContainer: {
         width: '90%',
         minHeight: 150,
@@ -211,6 +236,11 @@ export default function AddFriendScreen({navigation, route}) {
         borderRadius: 5,
         padding: 1,
         marginTop: 15
+    },
+    reelImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 5
     }
   });
   
