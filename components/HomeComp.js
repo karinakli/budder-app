@@ -19,6 +19,7 @@ export default function HomeComp({navigation}) {
   const [filter, setFilter] = useState('NAME');
   const [showModal, setModalPopup] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [myName , setMyName] = useState('');
   let latLong = [];
 
   const {fontScale} = useWindowDimensions();
@@ -80,6 +81,7 @@ export default function HomeComp({navigation}) {
         responseObjects = [...responseObjects, data]
       } else {
         friendIds = data.friends
+        setMyName(data.name)
         latLong = [data.lastLat, data.lastLong]
       }
     })
@@ -129,7 +131,7 @@ export default function HomeComp({navigation}) {
       return interests;
     }
     return (
-      <TouchableOpacity key={item.name}>
+      <TouchableOpacity key={item.name} onPress={() => navigation.navigate("AddFriend", {selectedFriends: [myName, item.name]})}>
           <LinearGradient 
               colors={[colors.budder, colors.maroon]}
               style={styles.friendContainer}
