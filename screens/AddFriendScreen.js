@@ -63,7 +63,8 @@ export default function AddFriendScreen({navigation, route}) {
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity style={{width: 40, height: 40, marginLeft: 10}} onPress={() => navigation.navigate('Home')}>
-                <Ionicons name="close" color={colors.rust} size={40} style={styles.closeIcon}/>
+                <Image source={require('../assets/Images/arrow-left.png')} style={{marginTop: 20, width: 30, height: 30, resizeMode: 'contain'}}/>
+                {/* <Ionicons name="close" color={colors.rust} size={40} style={styles.closeIcon}/> */}
             </TouchableOpacity>
             
             <View style={{alignItems: 'center'}}>
@@ -82,6 +83,9 @@ export default function AddFriendScreen({navigation, route}) {
                         <View style={{flexDirection: 'row'}}>
                             <Image source={require('../assets/Images/reel.png')}/>
                             <Text style={[styles.paragraph, {marginLeft: 10}]}>Your Reel</Text>
+                            <TouchableOpacity style={{marginLeft: '63%'}}>
+                                <Image source={require('../assets/Images/plus.png')} style={{width: 20, height: 20}}/>
+                            </TouchableOpacity>
                         </View>
                         <Text style={[styles.paragraph, {textAlign: 'center', marginTop: 20}]}>Nothing to see here.{'\n'}Snap a photo to get started!</Text>
                     </View>
