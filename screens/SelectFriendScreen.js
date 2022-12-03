@@ -6,7 +6,8 @@ import { collection, getDocs, query } from "firebase/firestore";
 import { db, auth } from "../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
-export default function SelectFriendScreen({navigation}) {
+export default function SelectFriendScreen({navigation, route}) {
+    const origin = route.params.origin;
     const [data, setData] = useState([]);
     const [unfilteredData, setunfilteredData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -25,7 +26,9 @@ export default function SelectFriendScreen({navigation}) {
           data['id'] = doc.id
           responseObjects = [...responseObjects, data]
         } else {
-          friendIds = data.friends
+          if (data.friends) {
+            friendIds = data.friends
+          }
         }
       })
       transformServerResponseObjects(responseObjects, friendIds)
@@ -44,11 +47,9 @@ export default function SelectFriendScreen({navigation}) {
         if (!friendIds.includes(object.id)) {
           // if the first letter of object.name is a title in DATA, add it to the corresponding section
           if (transformedData.map(section => section.title).includes(object.name[0].toUpperCase())) {
-            console.log("added to bucket")
             let index = transformedData.map(section => section.title).indexOf(object.name[0].toUpperCase())
             transformedData[index].data.push({name: object.name, selected: false, id: object.id, profilePicture: object.profilePhoto})
           } else {
-            console.log("new bucket")
             // if the first letter of object.name is not a title in DATA, add it to a new section
             transformedData.push({title: object.name[0], data: [{name: object.name, selected: false, id: object.id, profilePicture: object.profilePhoto}]})
           }
@@ -125,19 +126,25 @@ export default function SelectFriendScreen({navigation}) {
       await updateDoc(userRef, {
         friends: arrayUnion(...selectedFriendsIds)
       });
-      navigation.replace("Home")
+      if (origin === 'home') {
+        navigation.replace("Home")
+      } else {
+        navigation.navigate("Confirmation")
+      }
     }
       
   
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.search}>
-                <Text style={styles.header}>Select Friends to Add</Text>
+              {origin === 'home' ? <Text style={styles.header}>Select Friends to Add</Text> : <Text style={styles.header}>Add Some Friends To Start</Text>}
                 <View style={styles.searchWrapper}>
                     <TextInput style={styles.searchBar} value={searchQuery} onChangeText={(text) => setSearchQuery(text)} placeholder="Search..."/>
+                    { (origin === 'home') ? 
                     <TouchableOpacity onPress={() => navigation.navigate("Home")}>
                         <Text style={styles.cancelText}>Cancel</Text>
                     </TouchableOpacity>
+                    : null }
                 </View>
             </View>
             <SafeAreaView style={{marginTop: 20, width: '100%', paddingHorizontal: '7%', height: '85%'}}>

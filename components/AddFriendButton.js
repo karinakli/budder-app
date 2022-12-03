@@ -11,7 +11,7 @@ const AddFriendButton = ({navigation}) => {
     const styles = makeStyles(fontScale)
 
     const navigateAddProfile = () => {
-        navigation.navigate("SelectFriend");
+        navigation.navigate("SelectFriend", {origin: "home"});
         setAddFriendModal(false);
     }
 
