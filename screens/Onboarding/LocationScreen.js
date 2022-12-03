@@ -46,7 +46,7 @@ export default function LocationScreen({navigation}) {
 
     useEffect(() => {
         if (locationAllowed) {
-            navigation.navigate("Confirmation")
+            navigation.navigate("SelectFriend", {origin: "onboarding"})
         }
     }, [locationAllowed]) 
 

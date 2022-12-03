@@ -6,7 +6,8 @@ import { collection, getDocs, query } from "firebase/firestore";
 import { db, auth } from "../firebase"
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
-export default function SelectFriendScreen({navigation}) {
+export default function SelectFriendScreen({navigation, route}) {
+    const origin = route.params.origin;
     const [data, setData] = useState([]);
     const [unfilteredData, setunfilteredData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -15,16 +16,22 @@ export default function SelectFriendScreen({navigation}) {
 
     async function loadProfilesFromFirebase() {
       let responseObjects = []
+      let friendIds = []
       const usersRef = collection(db, "users");
       const q = query(usersRef);
       const querySnapshot = await getDocs(q,);
       querySnapshot.forEach((doc) => {
         let data = doc.data()
         if (doc.id !== auth.currentUser.uid) {
+          data['id'] = doc.id
           responseObjects = [...responseObjects, data]
+        } else {
+          if (data.friends) {
+            friendIds = data.friends
+          }
         }
       })
-      transformServerResponseObjects(responseObjects)
+      transformServerResponseObjects(responseObjects, friendIds)
         .then(transformedData =>{
           setData(transformedData)
           setunfilteredData(transformedData)
@@ -32,17 +39,20 @@ export default function SelectFriendScreen({navigation}) {
         .catch(err => console.log(err))
     }
   
-    async function transformServerResponseObjects(responseObjects) {
+    async function transformServerResponseObjects(responseObjects, friendIds) {
       let transformedData = []
       for (let i = 0; i < responseObjects.length; i++) {
         let object = responseObjects[i]
-        // if the first letter of object.name is a title in DATA, add it to the corresponding section
-        if (data.map(section => section.title).includes(object.name[0].toLowerCase())) {
-          let index = data.map(section => section.title.toLowerCase()).indexOf(object.name[0])
-          transformedData[index].data.push({name: object.name, selected: false, id: object.id, profilePicture: object.profilePhoto})
-        } else {
-          // if the first letter of object.name is not a title in DATA, add it to a new section
-          transformedData.push({title: object.name[0], data: [{name: object.name, selected: false, id: object.id, profilePicture: object.profilePhoto}]})
+        // Only show non-friends
+        if (!friendIds.includes(object.id)) {
+          // if the first letter of object.name is a title in DATA, add it to the corresponding section
+          if (transformedData.map(section => section.title).includes(object.name[0].toUpperCase())) {
+            let index = transformedData.map(section => section.title).indexOf(object.name[0].toUpperCase())
+            transformedData[index].data.push({name: object.name, selected: false, id: object.id, profilePicture: object.profilePhoto})
+          } else {
+            // if the first letter of object.name is not a title in DATA, add it to a new section
+            transformedData.push({title: object.name[0], data: [{name: object.name, selected: false, id: object.id, profilePicture: object.profilePhoto}]})
+          }
         }
       }
       // sort alphabetically by title
@@ -58,7 +68,7 @@ export default function SelectFriendScreen({navigation}) {
 
     const onSelectPerson = (item) => {
       let newData = [...data]
-      if (data.length > 1) {
+      if (data.map(section => section.title.toLowerCase()).includes(item.name[0].toLowerCase())) {
         let index = data.map(section => section.title.toLowerCase()).indexOf(item.name[0].toLowerCase())
         let index2 = data[index].data.map(person => person.name).indexOf(item.name)
         newData[index].data[index2].selected = !newData[index].data[index2].selected
@@ -66,7 +76,6 @@ export default function SelectFriendScreen({navigation}) {
         let index = data[0].data.map(person => person.name).indexOf(item.name)
         newData[0].data[index].selected = !newData[0].data[index].selected
       }
-      setData(newData)
       setData(newData)
     }
 
@@ -95,29 +104,47 @@ export default function SelectFriendScreen({navigation}) {
     }
 
     const getSelectedFriends = () => {
-      let selectedFriends = []
+      let selectedFriendsNames = []
+      let selectedFriendsIds = []
       for (let i = 0; i < data.length; i++) {
         let section = data[i]
         for (let j = 0; j < section.data.length; j++) {
           let person = section.data[j]
           if (person.selected) {
-            selectedFriends.push(person.name)
+            selectedFriendsNames.push(person.name)
+            selectedFriendsIds.push(person.id)
           }
         }
       }
-      console.log(selectedFriends)
-      return selectedFriends
+      return [selectedFriendsNames, selectedFriendsIds]
     }
+
+    const addFriendsToDatabase = async () => {
+
+      const [selectedFriendsNames, selectedFriendsIds] = getSelectedFriends()
+      const userRef = doc(db, "users", auth.currentUser.uid);
+      await updateDoc(userRef, {
+        friends: arrayUnion(...selectedFriendsIds)
+      });
+      if (origin === 'home') {
+        navigation.replace("Home")
+      } else {
+        navigation.navigate("Confirmation")
+      }
+    }
+      
   
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.search}>
-                <Text style={styles.header}>Select Friends To Create Profile</Text>
+              {origin === 'home' ? <Text style={styles.header}>Select Friends to Add</Text> : <Text style={styles.header}>Add Some Friends To Start</Text>}
                 <View style={styles.searchWrapper}>
                     <TextInput style={styles.searchBar} value={searchQuery} onChangeText={(text) => setSearchQuery(text)} placeholder="Search..."/>
+                    { (origin === 'home') ? 
                     <TouchableOpacity onPress={() => navigation.navigate("Home")}>
                         <Text style={styles.cancelText}>Cancel</Text>
                     </TouchableOpacity>
+                    : null }
                 </View>
             </View>
             <SafeAreaView style={{marginTop: 20, width: '100%', paddingHorizontal: '7%', height: '85%'}}>
@@ -142,8 +169,8 @@ export default function SelectFriendScreen({navigation}) {
               />  
               <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 20}}>
                 <TouchableOpacity style={[styles.yellowButton, styles.shadowProp]} 
-                  onPress={() => navigation.navigate("AddFriend", {selectedFriends: getSelectedFriends()})}>
-                  <Text style={styles.buttonText}>BUILD FRIENDSHIP PROFILE</Text>
+                  onPress={() => addFriendsToDatabase()}>
+                  <Text style={styles.buttonText}>ADD FRIENDS</Text>
                 </TouchableOpacity>
               </View>
               

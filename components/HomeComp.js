@@ -19,6 +19,7 @@ export default function HomeComp({navigation}) {
   const [filter, setFilter] = useState('NAME');
   const [showModal, setModalPopup] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [myName , setMyName] = useState('');
   let latLong = [];
 
   const {fontScale} = useWindowDimensions();
@@ -67,21 +68,24 @@ export default function HomeComp({navigation}) {
     }
   }
 
-
   async function loadProfilesFromFirebase() {
     let responseObjects = []
+    let friendIds = []
     const usersRef = collection(db, "users");
     const q = query(usersRef);
     const querySnapshot = await getDocs(q,);
     querySnapshot.forEach((doc) => {
       let data = doc.data()
       if (doc.id !== auth.currentUser.uid) {
+        data['id'] = doc.id
         responseObjects = [...responseObjects, data]
       } else {
+        friendIds = data.friends
+        setMyName(data.name)
         latLong = [data.lastLat, data.lastLong]
       }
     })
-    transformServerResponseObjects(responseObjects)
+    transformServerResponseObjects(responseObjects, friendIds)
       .then(newFriends =>{
         setFriends(newFriends)
         setFriendsCopy(newFriends)
@@ -89,23 +93,24 @@ export default function HomeComp({navigation}) {
       .catch(err => console.log(err))
   }
 
-  async function transformServerResponseObjects(responseObjects) {
+  async function transformServerResponseObjects(responseObjects, friendIds) {
     let newFriendObjects = []
     for (let i = 0; i < responseObjects.length; i++) {
       let friendResponse = responseObjects[i]
-      let randomNumMems = Math.floor(Math.random() * 20)
-      let newFriendObj = { name: 'N/A', distance: '', lastMet: '2022-11-28', numMems: randomNumMems, interests: [], image: require('../assets/Images/daniel.png')}
-      newFriendObj.name = friendResponse.name
-      newFriendObj.image = friendResponse.profilePhoto
-      newFriendObj.address = friendResponse.address
-      newFriendObj.interests = friendResponse.interests
-      let distance = distanceBetweenCoords(latLong[0], friendResponse.lastLat, latLong[1], friendResponse.lastLong)
-      newFriendObj.distance = distance
-      newFriendObj.lat = friendResponse.lastLat
-      newFriendObj.long = friendResponse.lastLong
-      newFriendObjects = [...newFriendObjects, newFriendObj]
+      if (friendIds.includes(friendResponse.id)) {
+        let randomNumMems = Math.floor(Math.random() * 20)
+        let newFriendObj = { name: 'N/A', distance: '', lastMet: '2022-11-28', numMems: randomNumMems, interests: [], image: require('../assets/Images/daniel.png')}
+        newFriendObj.name = friendResponse.name
+        newFriendObj.image = friendResponse.profilePhoto
+        newFriendObj.address = friendResponse.address
+        newFriendObj.interests = friendResponse.interests
+        let distance = distanceBetweenCoords(latLong[0], friendResponse.lastLat, latLong[1], friendResponse.lastLong)
+        newFriendObj.distance = distance
+        newFriendObj.lat = friendResponse.lastLat
+        newFriendObj.long = friendResponse.lastLong
+        newFriendObjects = [...newFriendObjects, newFriendObj]
+      }
     }
-
     return newFriendObjects
   }
 
@@ -126,7 +131,7 @@ export default function HomeComp({navigation}) {
       return interests;
     }
     return (
-      <TouchableOpacity key={item.name}>
+      <TouchableOpacity key={item.name} onPress={() => navigation.navigate("AddFriend", {selectedFriends: [myName, item.name]})}>
           <LinearGradient 
               colors={[colors.budder, colors.maroon]}
               style={styles.friendContainer}

@@ -52,7 +52,6 @@ export default function CameraScreen({navigation, route}) {
                 <Text style={styles.header}>MAKE A MEMORY</Text>
                 <Text style={[styles.paragraph]}>Snap a photo to add to your friendship memory reel!</Text>
                 <Camera style={styles.camera} type={type}>
-                    {/* <Image style={{width: '100%', height: '100%', borderRadius: 20}}source={require('../assets/Images/camera-placeholder.png')}/> */}
                 </Camera>
                 <View style={{flexDirection: 'row', marginTop: 20, justifyContent: 'space-evenly'}}>
                     {flash ? (
@@ -105,7 +104,6 @@ export default function CameraScreen({navigation, route}) {
         height: '78%',
         borderWidth: 2,
         borderColor: colors.rust,
-        borderRadius: 20,
         marginTop: 20,
     },
     switch: {
