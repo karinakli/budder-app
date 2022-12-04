@@ -19,7 +19,7 @@ export default function HomeScreen({navigation}) {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
-            if (route.name === 'HomeScreen') {
+            if (route.name === 'Home') {
               iconName = 'home'
             } else if (route.name === 'Itinerary') {
               iconName = 'list'
@@ -32,7 +32,7 @@ export default function HomeScreen({navigation}) {
           tabBarInactiveTintColor: 'black',
         })}
       >
-        <Tab.Screen name="HomeScreen" component={HomeComp} options={{headerShown: false, gestureEnabled: false}}/>
+        <Tab.Screen name="Home" component={HomeComp} options={{headerShown: false, gestureEnabled: false}}/>
         <Tab.Screen name="Itinerary" component={ItineraryScreen} options={{headerShown: false}}/>
         <Tab.Screen name="Profile" component={ProfileScreen} options={{headerShown: false}}/>
       </Tab.Navigator>

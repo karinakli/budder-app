@@ -56,7 +56,6 @@ export default function AddFriendScreen({navigation, route}) {
         for (let i = 0; i < 3; i++) {
             randomMemories.push(memories[Math.floor(Math.random() * memories.length)]);
         }
-        console.log(randomMemories)
         return randomMemories;
     }
 
@@ -83,7 +82,7 @@ export default function AddFriendScreen({navigation, route}) {
                         <View style={{flexDirection: 'row'}}>
                             <Image source={require('../assets/Images/reel.png')}/>
                             <Text style={[styles.paragraph, {marginLeft: 10}]}>Your Reel</Text>
-                            <TouchableOpacity style={{marginLeft: '63%'}}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Camera', {selectedFriends: selectedFriends})} style={{marginLeft: '63%'}}>
                                 <Image source={require('../assets/Images/plus.png')} style={{width: 20, height: 20}}/>
                             </TouchableOpacity>
                         </View>
