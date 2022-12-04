@@ -32,8 +32,8 @@ export default function HomeScreen({navigation}) {
           tabBarInactiveTintColor: 'black',
         })}
       >
-        <Tab.Screen name="HomeScreen" component={HomeComp} options={{headerShown: false, gestureEnabled: false}}/>
-        <Tab.Screen name="Itinerary" component={ItineraryScreen} options={{headerShown: false}}/>
+        <Tab.Screen name="Home" component={HomeComp} options={{headerShown: false, gestureEnabled: false}}/>
+        <Tab.Screen name="Meetups" component={ItineraryScreen} options={{headerShown: false}}/>
         <Tab.Screen name="Profile" component={ProfileScreen} options={{headerShown: false}}/>
       </Tab.Navigator>
     );

@@ -2,7 +2,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 import { StyleSheet, Text, View, Image, useState, Pressable } from 'react-native';
 import {colors} from '../assets/Themes/colors'
 
-export default function HomeScreen({navigation}) {
+export default function ItineraryScreen({navigation}) {
     return (
       <View style={styles.container}>
       </View>
