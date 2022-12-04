@@ -15,7 +15,6 @@ const windowHeight = Dimensions.get('window').height;
 
 
 export default function HomeComp({navigation}) {
-  const filters = ['NAME', 'DISTANCE', 'LAST MET', 'MEMS']
   const [filter, setFilter] = useState('NAME');
   const [showModal, setModalPopup] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

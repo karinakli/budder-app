@@ -94,7 +94,7 @@ export default function AddFriendScreen({navigation, route}) {
                                     ))}
                                 </View>
                                 <TouchableOpacity onPress={() => navigation.navigate('Reel', {selectedFriends: selectedFriends})}>
-                                    <Text style={styles.paragraph2}>See all</Text>
+                                    <Text style={styles.paragraph2}>View All</Text>
                                 </TouchableOpacity>
                                 
                             </>
