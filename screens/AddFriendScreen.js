@@ -61,7 +61,7 @@ export default function AddFriendScreen({navigation, route}) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={{width: 40, height: 40, marginLeft: 10}} onPress={() => navigation.navigate('Home')}>
+            <TouchableOpacity style={{width: 40, height: 40, marginLeft: 10}} onPress={() => navigation.navigate('HomeScreen')}>
                 <Image source={require('../assets/Images/arrow-left.png')} style={{marginTop: 20, width: 30, height: 30, resizeMode: 'contain'}}/>
                 {/* <Ionicons name="close" color={colors.rust} size={40} style={styles.closeIcon}/> */}
             </TouchableOpacity>

@@ -1,19 +1,19 @@
 import {LinearGradient} from 'expo-linear-gradient';
-import { StyleSheet, Text, View, Image, useState, Pressable } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, useState, Pressable } from 'react-native';
 import {colors} from '../assets/Themes/colors'
 
 export default function HomeScreen({navigation}) {
     return (
-      <View style={styles.container}>
-      </View>
+      <SafeAreaView style={styles.container}>
+      </SafeAreaView>
     );
   }
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
+      backgroundColor: colors.white,
+      alignItems: 'center'
     },
     background: {
       height: '100%',
