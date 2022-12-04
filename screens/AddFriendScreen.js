@@ -56,13 +56,12 @@ export default function AddFriendScreen({navigation, route}) {
         for (let i = 0; i < 3; i++) {
             randomMemories.push(memories[Math.floor(Math.random() * memories.length)]);
         }
-        console.log(randomMemories)
         return randomMemories;
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={{width: 40, height: 40, marginLeft: 10}} onPress={() => navigation.navigate('Home')}>
+            <TouchableOpacity style={{width: 40, height: 40, marginLeft: 10}} onPress={() => navigation.navigate('HomeScreen')}>
                 <Image source={require('../assets/Images/arrow-left.png')} style={{marginTop: 20, width: 30, height: 30, resizeMode: 'contain'}}/>
                 {/* <Ionicons name="close" color={colors.rust} size={40} style={styles.closeIcon}/> */}
             </TouchableOpacity>
@@ -83,7 +82,7 @@ export default function AddFriendScreen({navigation, route}) {
                         <View style={{flexDirection: 'row'}}>
                             <Image source={require('../assets/Images/reel.png')}/>
                             <Text style={[styles.paragraph, {marginLeft: 10}]}>Your Reel</Text>
-                            <TouchableOpacity style={{marginLeft: '63%'}}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Camera', {selectedFriends: selectedFriends})} style={{marginLeft: '63%'}}>
                                 <Image source={require('../assets/Images/plus.png')} style={{width: 20, height: 20}}/>
                             </TouchableOpacity>
                         </View>
@@ -95,7 +94,7 @@ export default function AddFriendScreen({navigation, route}) {
                                     ))}
                                 </View>
                                 <TouchableOpacity onPress={() => navigation.navigate('Reel', {selectedFriends: selectedFriends})}>
-                                    <Text style={styles.paragraph2}>See all</Text>
+                                    <Text style={styles.paragraph2}>View All</Text>
                                 </TouchableOpacity>
                                 
                             </>

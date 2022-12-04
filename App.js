@@ -47,7 +47,7 @@ export default function App() {
             <Stack.Screen name="AddProfile" component={AddProfileScreen} options={{headerShown: false, gestureEnabled: false}}/>
             <Stack.Screen name="Location" component={LocationScreen} options={{headerShown: false, gestureEnabled: false}}/>
             <Stack.Screen name="Confirmation" component={ConfirmationScreen} options={{headerShown: false, gestureEnabled: false}}/>
-            <Stack.Screen name="Home" component={HomeScreen} option={{headerShown: false, gestureEnabled: false}}/>
+            <Stack.Screen name="HomeScreen" component={HomeScreen} option={{headerShown: false, gestureEnabled: false}}/>
             <Stack.Screen name="AddFriend" component={AddFriendScreen}/>
             <Stack.Screen name="SelectFriend" component={SelectFriendScreen}/>
             <Stack.Screen name="Camera" component={CameraScreen}/>

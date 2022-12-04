@@ -1,16 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View, Image, Text, ScrollView, TouchableOpacity, useWindowDimensions, Pressable} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../../assets/Themes/colors';
 import { db, auth } from "../../firebase"
-import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
 
-const ListItem = (props) => {
+export const ListItem = (props) => {
     const {item} = props;
     const [pressed, setPressed] = useState(false);
 
     const {fontScale} = useWindowDimensions();
     const styles = makeStyles(fontScale)
+
+    useEffect(() => {getStartState()}, []);
+
+    async function getStartState() {
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+            if (docSnap.data().interests.includes(props.name)) {
+                setPressed(true)
+            }
+        }
+    }
 
     async function onPress() {
         const user = auth.currentUser;

@@ -18,7 +18,7 @@ export default function LogInScreen({navigation}) {
     useEffect(() => {
         const unsubscribe = firebase.auth().onAuthStateChanged(user => {
             if (user) {
-                navigation.replace("Home")
+                navigation.replace("HomeScreen")
             }
         })
         return unsubscribe

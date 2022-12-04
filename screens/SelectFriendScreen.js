@@ -127,7 +127,7 @@ export default function SelectFriendScreen({navigation, route}) {
         friends: arrayUnion(...selectedFriendsIds)
       });
       if (origin === 'home') {
-        navigation.replace("Home")
+        navigation.replace("HomeScreen")
       } else {
         navigation.navigate("Confirmation")
       }
@@ -141,7 +141,7 @@ export default function SelectFriendScreen({navigation, route}) {
                 <View style={styles.searchWrapper}>
                     <TextInput style={styles.searchBar} value={searchQuery} onChangeText={(text) => setSearchQuery(text)} placeholder="Search..."/>
                     { (origin === 'home') ? 
-                    <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                    <TouchableOpacity onPress={() => navigation.navigate("HomeScreen")}>
                         <Text style={styles.cancelText}>Cancel</Text>
                     </TouchableOpacity>
                     : null }

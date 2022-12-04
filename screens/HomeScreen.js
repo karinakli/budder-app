@@ -19,7 +19,7 @@ export default function HomeScreen({navigation}) {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
-            if (route.name === 'HomeScreen') {
+            if (route.name === 'Home') {
               iconName = 'home'
             } else if (route.name === 'Itinerary') {
               iconName = 'list'
