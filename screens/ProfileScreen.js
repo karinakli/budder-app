@@ -1,17 +1,20 @@
 import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, FlatList } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, FlatList, Modal } from 'react-native';
 import {colors} from '../assets/Themes/colors'
 import { collection, getDocs, query } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import Icon from 'react-native-ionicons';
 import {memories} from '../assets/memoryData';
+import { ListItem } from './Onboarding/InterestsScreen';
 
 const windowWidth = Dimensions.get('window').width;
 
 export default function ProfileScreen({navigation}) {
   const [profile, setProfile] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalType, setModalType] = useState("");
 
   const interestTypeObj = {
     interests: ["Cooking", "Traveling", "Art", "Gaming", "Dance", "Photography", "Baking", "Hiking", "Gym"],
@@ -19,14 +22,27 @@ export default function ProfileScreen({navigation}) {
     foods: ["Mexican", "Italian", "Chinese", "Japanese", "Thai", "Indian", "American", "Greek", "Korean"], 
   }
 
+  const listInterests = interestTypeObj.interests.map((item) =>
+    <ListItem key={item} name={item}/>
+  );
+  const listMusic = interestTypeObj.music.map((item) =>
+    <ListItem key={item} name={item}/>
+  );
+  const listFoods = interestTypeObj.foods.map((item) =>
+    <ListItem key={item} name={item}/>
+  );
+
+  const interestsRenderable = {"interests": listInterests, "music": listMusic, "foods": listFoods}
+
   useEffect(() => {loadProfileDataFromFirebase()}, []);
+  useEffect(() => {loadProfileDataFromFirebase()}, [modalVisible]);
 
   async function loadProfileDataFromFirebase() {
     const usersRef = collection(db, "users");
     const q = query(usersRef);
     const querySnapshot = await getDocs(q,);
     querySnapshot.forEach((doc) => {
-      if (doc.id !== auth.currentUser.uid) {
+      if (doc.id === auth.currentUser.uid) {
         setProfile(doc.data())
       }
     })
@@ -69,7 +85,7 @@ export default function ProfileScreen({navigation}) {
                 )
               }
             }) : null}
-            <TouchableOpacity style={{justifyContent: 'center'}}>
+            <TouchableOpacity onPress={() => {setModalVisible(true); setModalType("interests")}} style={{justifyContent: 'center'}}>
               <Ionicons name="add" size={30} color={colors.rust} />
             </TouchableOpacity>
           </View>
@@ -84,7 +100,7 @@ export default function ProfileScreen({navigation}) {
                 )
               }
             }) : null}
-            <TouchableOpacity style={{justifyContent: 'center'}}>
+            <TouchableOpacity onPress={() => {setModalVisible(true); setModalType("music")}} style={{justifyContent: 'center'}}>
               <Ionicons name="add" size={30} color={colors.rust} />
             </TouchableOpacity>
           </View>
@@ -99,7 +115,7 @@ export default function ProfileScreen({navigation}) {
                 )
               }
             }) : null}
-            <TouchableOpacity style={{justifyContent: 'center'}}>
+            <TouchableOpacity onPress={() => {setModalVisible(true); setModalType("foods")}} style={{justifyContent: 'center'}}>
               <Ionicons name="add" size={30} color={colors.rust} />
             </TouchableOpacity>
           </View>
@@ -117,6 +133,26 @@ export default function ProfileScreen({navigation}) {
           renderItem={item => renderItem(item)}
           keyExtractor={(item) => item.id}
         />
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+            <TouchableOpacity style={styles.closeIcon} onPress={() => setModalVisible(!modalVisible)}>
+                <Ionicons name="close" size={25} color={colors.rust} />
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>UPDATE {modalType.toUpperCase()}</Text>
+              <View style={{flexDirection: 'row', flexWrap: "wrap", textAlign: 'center', justifyContent: 'center'}} >{interestsRenderable[modalType]}</View>
+            </View>
+          </View>
+
+        </Modal>
+
       </SafeAreaView>
     );
   }
@@ -220,5 +256,39 @@ export default function ProfileScreen({navigation}) {
       height: windowWidth * 0.4,
       margin: windowWidth * 0.02,
       borderRadius: 10,
-    }
+    },
+    centeredView: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 22,
+      backgroundColor: '#000000aa',
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: "white",
+      borderRadius: 15,
+      padding: 35,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5
+    },
+    closeIcon: {
+      position: 'absolute',
+      top: 10,
+      right: 10
+    },
+    modalTitle: {
+      fontSize: 24,
+      marginLeft: 10,
+      fontWeight: 'bold',
+      color: colors.rust,
+      marginBottom: 20
+    },
   });
