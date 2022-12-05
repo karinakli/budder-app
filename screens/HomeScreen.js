@@ -21,8 +21,8 @@ export default function HomeScreen({navigation}) {
             let iconName;
             if (route.name === 'Home') {
               iconName = 'home'
-            } else if (route.name === 'Itinerary') {
-              iconName = 'list'
+            } else if (route.name === 'Meetups') {
+              iconName = "people-outline"
             } else if (route.name === 'Profile') {
               iconName = 'person'
             }
