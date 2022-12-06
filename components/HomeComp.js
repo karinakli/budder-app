@@ -184,13 +184,16 @@ export default function HomeComp({navigation}) {
             visible={showModal}
             onRequestClose={() => {setModalPopup(!showModal)}}
         >
-            <View style={styles.modal} >
+            <TouchableOpacity style={styles.modal} onPress={() => setModalPopup(false)}>
               
               <SafeAreaView style={styles.modalBackground}>
-                <TouchableOpacity style={{width: 30, height: 30, marginLeft: "auto"}} onPress={() => {setModalPopup(!showModal)}}>
+                <TouchableOpacity style={{width: 30, height: 30, marginLeft: "auto"}} onPress={() => 
+                  {setModalPopup(false);
+                  console.log("close modal")
+                }}>
                   <Ionicons name="close" color={colors.rust} size={30} style={styles.closeIcon}/>
                 </TouchableOpacity>
-                <Text style={[styles.header, {marginTop: -10}]}>Sort Friends</Text>
+                <Text style={[styles.header, {marginTop: -10, width: '80%'}]}>Sort Friends</Text>
                 <View style={styles.modalRow}>
                   <Text style={styles.modalText}>BY NAME (ALPHABETICAL)</Text>
                   <TouchableOpacity onPress={() => changeFilter('NAME')}>
@@ -216,7 +219,7 @@ export default function HomeComp({navigation}) {
                   </TouchableOpacity>
                 </View>
               </SafeAreaView>
-            </View>
+            </TouchableOpacity>
         </Modal>
     </SafeAreaView>
   );

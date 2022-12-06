@@ -84,14 +84,14 @@ export default function ContactScreen({navigation, route}) {
               {edit ? (
                 <>
                   <TextInput 
-                    style={[styles.paragraph2, {marginTop: -7}]}
+                    style={[styles.paragraph3, {marginTop: -7}]}
                     onChangeText={setMessage}
                     value={message}
                     multiline={true}
                   />
                 </>
               ):(
-                <Text style={styles.paragraph2}>{message}</Text>
+                <Text style={styles.paragraph3}>{message}</Text>
               )}
             </View>
           </LinearGradient>
@@ -144,6 +144,14 @@ export default function ContactScreen({navigation, route}) {
       lineHeight: 20,
       width: '70%'
     },
+    paragraph3: {
+      marginTop: 1,
+      fontSize: 16 / fontScale,
+      fontFamily: 'Inter-Regular',
+      color: colors.rust,
+      lineHeight: 20,
+      width: '65%'
+    },
     boldParagraph: {
       fontSize: 16 / fontScale,
       fontFamily: 'Inter-Bold',
@@ -187,7 +195,7 @@ export default function ContactScreen({navigation, route}) {
     messageContainer: {
       width: windowWidth - 40,
       padding: 1,
-      height: 80,
+      minHeight: 80,
       borderBottomLeftRadius: 5,
       borderBottomRightRadius: 5,
       marginTop: -1,

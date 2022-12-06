@@ -36,7 +36,10 @@ export default function SuggestionScreen({navigation}) {
                   <Text style={[styles.paragraph, {marginLeft: 20, width: '80%'}]}>{'\u2022'} {item.address}</Text>
                   <Text style={[styles.paragraph, {textDecorationLine: 'underline', marginTop: 5}]}>Hours:</Text>
                   <Text style={[styles.paragraph, {marginLeft: 20, width: '80%'}]}>{'\u2022'} {item.hours}</Text>
-                  <TouchableOpacity style={styles.contactButton} onPress={() => navigation.navigate('Contact', {item: item})}>
+                  <TouchableOpacity style={styles.contactButton} onPress={() => {
+                    console.log("switch to contact"); 
+                    navigation.push('Contact', {item: item})
+                  }}>
                     <Text style={styles.contactText}>CONTACT</Text>
                   </TouchableOpacity>
                 </View>

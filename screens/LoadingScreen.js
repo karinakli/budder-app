@@ -29,21 +29,13 @@ export default function LoadingScreen({navigation}) {
         }
       })
     }
-
-    function reset() {
-      setSeconds(0);
-      navigation.navigate('Suggestion')
-    }
-
+    
     useEffect(() => {
-      let interval = null;
-      interval = setInterval(() => {
-        setSeconds(seconds => seconds + 1);
-      }, 1000)
-      if (seconds === 5) {
-        clearInterval(interval);
-        reset()
-      }
+      const interval = setTimeout(() => {
+        console.log("timed out")
+        navigation.navigate("Suggestion")
+      }, 5000)
+      return () => clearTimeout(interval)
     }, [seconds])
   
     return (

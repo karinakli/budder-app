@@ -7,7 +7,7 @@ export const brunchSFData = [
       hours: '8AM - 5PM',
       where: 'Tartine Bakery in San Francisco, CA',
       tags: '#brunch #date #city',
-      message: 'Wanna grab brunch soon at Tartine Bakery in San Francisco?'
+      message: 'Wanna grab brunch soon at Tartine Bakery in SF?'
     },
     {
         id: 2,
@@ -17,7 +17,7 @@ export const brunchSFData = [
         hours: '8AM - 6PM',
         where: 'Indie Superette in San Francisco, CA',
         tags: '#brunch #date #city',
-        message: 'Wanna grab brunch soon at Indie Superette in San Francisco?'
+        message: 'Wanna grab brunch soon at Indie Superette in SF?'
       },
       {
         id: 3,
@@ -27,7 +27,7 @@ export const brunchSFData = [
         hours: '9AM - 9PM',
         where: 'Son & Garden in San Francisco, CA',
         tags: '#brunch #date #city',
-        message: 'Wanna grab brunch soon at Son & Garden in San Francisco?'
+        message: 'Wanna grab brunch soon at Son & Garden in SF?'
       },
       {
         id: 4,
@@ -37,7 +37,7 @@ export const brunchSFData = [
         hours: '8AM - 2:30PM',
         where: 'Sweet Maple in San Francisco, CA',
         tags: '#brunch #date #city',
-        message: 'Wanna grab brunch soon at Sweet Maple in San Francisco?'
+        message: 'Wanna grab brunch soon at Sweet Maple in SF?'
       },
 
   ]
