@@ -19,6 +19,9 @@ import SelectFriendScreen from './screens/SelectFriendScreen';
 import AddFriendScreen from './screens/AddFriendScreen'
 import CameraScreen from './screens/CameraScreen';
 import ReelScreen from './screens/ReelScreen';
+import LoadingScreen from './screens/LoadingScreen';
+import SuggestionScreen from './screens/SuggestionScreen';
+import ContactScreen from './screens/ContactScreen'
 
 const Stack = createStackNavigator();
 
@@ -39,7 +42,7 @@ export default function App() {
   return (
       <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
-            
+            <Stack.Screen name="Suggestion" component={SuggestionScreen}/>
             <Stack.Screen name="Default" component={DefaultScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Login" component={LogInScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Signup" component={SignUpScreen} options={{headerShown: false, gestureEnabled: false}} />
@@ -52,6 +55,8 @@ export default function App() {
             <Stack.Screen name="SelectFriend" component={SelectFriendScreen}/>
             <Stack.Screen name="Camera" component={CameraScreen}/>
             <Stack.Screen name="Reel" component={ReelScreen}/>
+            <Stack.Screen name="Loading" component={LoadingScreen}/>
+            <Stack.Screen name="Contact" component={ContactScreen}/>
           </Stack.Navigator>
       </NavigationContainer>
   )

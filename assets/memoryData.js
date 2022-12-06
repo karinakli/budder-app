@@ -1,5 +1,3 @@
-// there def is a better way to do this LOL idk why i did it this way
-
 export const memories = [
     {
         id: 1,

@@ -1,7 +1,7 @@
 import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, FlatList, Modal } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, FlatList, Modal, useWindowDimensions } from 'react-native';
 import {colors} from '../assets/Themes/colors'
 import { collection, getDocs, query } from "firebase/firestore";
 import { auth, db } from "../firebase";
@@ -15,6 +15,9 @@ export default function ProfileScreen({navigation}) {
   const [profile, setProfile] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState("");
+
+  const {fontScale} = useWindowDimensions();
+    const styles = makeStyles(fontScale)
 
   const interestTypeObj = {
     interests: ["Cooking", "Traveling", "Art", "Gaming", "Dance", "Photography", "Baking", "Hiking", "Gym"],
@@ -157,7 +160,7 @@ export default function ProfileScreen({navigation}) {
     );
   }
 
-  const styles = StyleSheet.create({
+  const makeStyles = fontScale => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.white,
@@ -185,7 +188,7 @@ export default function ProfileScreen({navigation}) {
       width: '100%',
     },
     name: {
-      fontSize: 24,
+      fontSize: 24 / fontScale,
       fontWeight: 'bold',
       textAlign: 'center',
       marginTop: 20,
@@ -198,7 +201,7 @@ export default function ProfileScreen({navigation}) {
       justifyContent: 'center',
     },
     location: {
-      fontSize: 16,
+      fontSize: 16 / fontScale,
       color: colors.rust,
       marginLeft: 5
     },
@@ -207,7 +210,7 @@ export default function ProfileScreen({navigation}) {
       marginLeft: 20,
     },
     interestsTitle: {
-      fontSize: 24,
+      fontSize: 24 / fontScale,
       marginLeft: 10,
       fontWeight: 'bold',
       color: colors.rust
@@ -226,7 +229,7 @@ export default function ProfileScreen({navigation}) {
     interestText: {
       fontFamily: 'Inter-Regular',
       color: colors.rust,
-      fontSize: 16,
+      fontSize: 16 / fontScale,
       textAlign: 'center'
     },
     horizonalRule: {
@@ -244,7 +247,7 @@ export default function ProfileScreen({navigation}) {
       alignItems: 'center'
     },
     seeAllText: {
-      fontSize: 14,
+      fontSize: 14 / fontScale,
       marginRight: 30,
       marginTop: 10,
       fontFamily: 'Inter-Regular',
@@ -285,7 +288,7 @@ export default function ProfileScreen({navigation}) {
       right: 10
     },
     modalTitle: {
-      fontSize: 24,
+      fontSize: 24 / fontScale,
       marginLeft: 10,
       fontWeight: 'bold',
       color: colors.rust,

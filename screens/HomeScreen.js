@@ -22,7 +22,7 @@ export default function HomeScreen({navigation}) {
             if (route.name === 'Home') {
               iconName = 'home'
             } else if (route.name === 'Meetups') {
-              iconName = "people-outline"
+              iconName = "people"
             } else if (route.name === 'Profile') {
               iconName = 'person'
             }

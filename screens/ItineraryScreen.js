@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { AutoFocus } from 'expo-camera';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView,Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView, Dimensions, ScrollView, useWindowDimensions } from 'react-native';
 import {colors} from '../assets/Themes/colors'
 
 const windowWidth = Dimensions.get('window').width;
@@ -11,6 +11,9 @@ export default function ItineraryScreen({navigation}) {
     const [locationSelection, setLocationSelection] = useState("");
     const [friendSelection, setFriendSelection] = useState("");
     const [planSelection, setPlanSelection] = useState("");
+
+    const {fontScale} = useWindowDimensions();
+    const styles = makeStyles(fontScale)
   
     return (
       <View style={styles.container}>
@@ -20,7 +23,9 @@ export default function ItineraryScreen({navigation}) {
             <Text style={styles.paragraph}>let's plan a friend meetup</Text>
           </SafeAreaView>
         </View>
-        <View style={styles.selectFriendContainer}>
+        <View style={{height: '72%', paddingTop: 20}}>
+        <ScrollView>
+        <View style={[styles.selectFriendContainer, {marginTop: 0}]}>
           <Text style={styles.subheaderText} >I want to meetup with...</Text>
           <LinearGradient 
               colors={[colors.budder, colors.maroon]}
@@ -38,7 +43,7 @@ export default function ItineraryScreen({navigation}) {
         </View>
         {friendSelection !== "" ? (
         <View style={styles.selectFriendContainer}>
-          <Text style={styles.subheaderText} >somwhere...</Text>
+          <Text style={styles.subheaderText} >somewhere...</Text>
           <LinearGradient 
               colors={[colors.budder, colors.maroon]}
               style={styles.gradientContainer}
@@ -85,6 +90,8 @@ export default function ItineraryScreen({navigation}) {
           </LinearGradient>
         </View>
         ) : null}
+        </ScrollView> 
+        </View>
         <View style={styles.buttonContainer}>
             {friendSelection === "" ? (
             <View style={styles.outlinedButton}>
@@ -102,17 +109,18 @@ export default function ItineraryScreen({navigation}) {
             </View>
             ) : null }
             {planSelection !== "" ? (
-            <TouchableOpacity style={styles.yellowButton}>
+            <TouchableOpacity style={styles.yellowButton} onPress={() => navigation.navigate("Loading")}>
               <Text style={styles.yellowButtonText}>Find a plan</Text>
             </TouchableOpacity>
             ) : null }
         </View>
-
+            
+          
       </View>
     );
   }
 
-  const styles = StyleSheet.create({
+  const makeStyles = fontScale => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.white,
@@ -126,14 +134,14 @@ export default function ItineraryScreen({navigation}) {
       height: 150
     },
     header: {
-      fontSize: 30,
+      fontSize: 30 / fontScale,
       marginTop: 10,
       fontFamily: 'Inter-Bold',
       color: colors.rust,
       textAlign: 'center',
     },
     paragraph: {
-      fontSize: 24,
+      fontSize: 24 / fontScale,
       fontFamily: 'Inter-Regular',
       color: colors.rust,
       textAlign: 'center',
@@ -144,7 +152,7 @@ export default function ItineraryScreen({navigation}) {
       marginTop: 20,
     },
     subheaderText: {
-      fontSize: 20,
+      fontSize: 20 / fontScale,
       fontFamily: 'Inter-Bold',
       color: colors.rust,
       textAlign: 'center'
@@ -162,7 +170,7 @@ export default function ItineraryScreen({navigation}) {
       width: '100%',
       backgroundColor: 'white',
       borderRadius: 5,
-      fontSize: 16,
+      fontSize: 16 / fontScale,
     },
     button: {
       padding: 10,
@@ -186,7 +194,7 @@ export default function ItineraryScreen({navigation}) {
       width: '100%',
     },
     buttonText: {
-      fontSize: 16,
+      fontSize: 16 / fontScale,
       fontFamily: 'Inter-Regular',
       color: colors.rust,
       textAlign: 'center'
@@ -216,7 +224,7 @@ export default function ItineraryScreen({navigation}) {
       alignItems: 'center',
     },
     yellowButtonText: {
-      fontSize: 16,
+      fontSize: 16 / fontScale,
       fontFamily: 'Inter-Bold',
       color: colors.rust,
       textAlign: 'center'
