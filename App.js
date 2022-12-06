@@ -42,7 +42,6 @@ export default function App() {
   return (
       <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
-            <Stack.Screen name="Suggestion" component={SuggestionScreen}/>
             <Stack.Screen name="Default" component={DefaultScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Login" component={LogInScreen} options={{headerShown: false}}/>
             <Stack.Screen name="Signup" component={SignUpScreen} options={{headerShown: false, gestureEnabled: false}} />
@@ -56,6 +55,7 @@ export default function App() {
             <Stack.Screen name="Camera" component={CameraScreen}/>
             <Stack.Screen name="Reel" component={ReelScreen}/>
             <Stack.Screen name="Loading" component={LoadingScreen}/>
+            <Stack.Screen name="Suggestion" component={SuggestionScreen}/>
             <Stack.Screen name="Contact" component={ContactScreen}/>
           </Stack.Navigator>
       </NavigationContainer>

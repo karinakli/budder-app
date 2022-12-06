@@ -114,6 +114,7 @@ export default function LoadingScreen({navigation}) {
       width: 180,
       height: 180,
       resizeMode: 'contain',
+      borderRadius: '70%'
     },
     plusIcon: {
       width: 70,
