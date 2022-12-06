@@ -95,17 +95,17 @@ export default function ItineraryScreen({navigation}) {
         <View style={styles.buttonContainer}>
             {friendSelection === "" ? (
             <View style={styles.outlinedButton}>
-              <Text style={styles.yellowButtonText}>0 of 3</Text>
+              <Text style={styles.yellowButtonText}>0 of 3 selected</Text>
             </View>
             ) : null }
             {friendSelection !== "" && locationSelection === "" ? (
             <View style={styles.outlinedButton}>
-              <Text style={styles.yellowButtonText}>1 of 3</Text>
+              <Text style={styles.yellowButtonText}>1 of 3 selected</Text>
             </View>
             ) : null }
             { locationSelection !== "" && planSelection === "" ? (
             <View style={styles.outlinedButton}>
-              <Text style={styles.yellowButtonText}>2 of 3</Text>
+              <Text style={styles.yellowButtonText}>2 of 3 selected</Text>
             </View>
             ) : null }
             {planSelection !== "" ? (
