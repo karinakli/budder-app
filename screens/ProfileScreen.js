@@ -1,7 +1,7 @@
 import {LinearGradient} from 'expo-linear-gradient';
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, FlatList, Modal, useWindowDimensions } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, FlatList, Modal, useWindowDimensions, ScrollView } from 'react-native';
 import {colors} from '../assets/Themes/colors'
 import { collection, getDocs, query } from "firebase/firestore";
 import { auth, db } from "../firebase";
@@ -10,6 +10,7 @@ import {memories} from '../assets/memoryData';
 import { ListItem } from './Onboarding/InterestsScreen';
 
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function ProfileScreen({navigation}) {
   const [profile, setProfile] = useState(false);
@@ -69,6 +70,7 @@ export default function ProfileScreen({navigation}) {
           />
           <Text style={styles.yellowBar} />
         </View>
+        <ScrollView style={{width: windowWidth, padding: 20, height: windowHeight * 0.3}}>
         <View style={styles.nameLocation}>
           <Text style={styles.name}>{profile ? profile.name : 'Loading...'}</Text>
           <View style={styles.locationWrapper}>
@@ -76,6 +78,7 @@ export default function ProfileScreen({navigation}) {
             <Text style={styles.location}>{profile ? profile.address : 'Loading...'}</Text>
           </View>
         </View>
+        
         <View style={styles.interestsWrapper}>
           <Text style={styles.interestsTitle}>Interests</Text>
           <View style={styles.interests}>
@@ -130,12 +133,15 @@ export default function ProfileScreen({navigation}) {
               <Text style={styles.seeAllText}>View All</Text>
           </TouchableOpacity>
         </View>
+        <View style={{marginBottom: 40}}>
         <FlatList
           data={memories}
           horizontal
           renderItem={item => renderItem(item)}
           keyExtractor={(item) => item.id}
         />
+        </View>
+        </ScrollView>
         <Modal
           animationType="fade"
           transparent={true}
@@ -199,6 +205,7 @@ export default function ProfileScreen({navigation}) {
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'center',
+      marginBottom: 10,
     },
     location: {
       fontSize: 16 / fontScale,
@@ -207,13 +214,12 @@ export default function ProfileScreen({navigation}) {
     },
     interestsWrapper: {
       width: '100%',
-      marginLeft: 20,
     },
     interestsTitle: {
-      fontSize: 24 / fontScale,
-      marginLeft: 10,
+      fontSize: 20 / fontScale,
       fontWeight: 'bold',
-      color: colors.rust
+      color: colors.rust,
+      marginTop: 10,
     },
     interests: {
       width: '100%',
@@ -233,7 +239,7 @@ export default function ProfileScreen({navigation}) {
       textAlign: 'center'
     },
     horizonalRule: {
-      width: '90%',
+      width: '100%',
       height: 0.5,
       backgroundColor: colors.lightGray,
       marginTop: 20
@@ -241,14 +247,12 @@ export default function ProfileScreen({navigation}) {
     memoriesWrapper: {
       width: '100%',
       flexDirection: 'row',
-      marginLeft: 20,
       marginTop: 20,
       justifyContent: 'space-between',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     seeAllText: {
       fontSize: 14 / fontScale,
-      marginRight: 30,
       marginTop: 10,
       fontFamily: 'Inter-Regular',
       color: colors.rust,
@@ -257,7 +261,8 @@ export default function ProfileScreen({navigation}) {
     memory: {
       width: windowWidth * 0.4,
       height: windowWidth * 0.4,
-      margin: windowWidth * 0.02,
+      marginVertical: 10,
+      marginRight: 5,
       borderRadius: 10,
     },
     centeredView: {
